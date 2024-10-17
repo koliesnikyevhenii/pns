@@ -6,6 +6,8 @@ import { onBeforeMount, reactive, ref } from "vue";
 const filters1 = ref(null);
 const loading1 = ref(null);
 const devices = ref(null);
+const device = ref({});
+const deleteDeviceDialog = ref(false);
 
 function getSeverity(status) {
   return "info";
@@ -24,6 +26,11 @@ function initFilters1() {
   filters1.value = {
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
   };
+}
+
+function confirmDeleteDevice(dev) {
+  device.value = dev;
+  deleteDeviceDialog.value = true;
 }
 </script>
 
@@ -129,17 +136,36 @@ function initFilters1() {
             outlined
             rounded
             class="mr-2"
-            @click="editProduct(slotProps.data)"
+            @click="editDevice(data)"
           />
           <Button
             icon="pi pi-trash"
             outlined
             rounded
             severity="danger"
-            @click="confirmDeleteProduct(slotProps.data)"
+            @click="confirmDeleteDevice(data)"
           />
         </template>
       </Column>
     </DataTable>
   </div>
+
+  <Dialog
+    v-model:visible="deleteDeviceDialog"
+    :style="{ width: '450px' }"
+    header="Confirm"
+    :modal="true"
+  >
+    <div class="flex items-center gap-4">
+      <i class="pi pi-exclamation-triangle !text-3xl" />
+      <span v-if="device"
+        >Are you sure you want to delete <b>{{ device.alias }}</b
+        >?</span
+      >
+    </div>
+    <template #footer>
+      <Button label="No" icon="pi pi-times" text @click="deleteDeviceDialog = false" />
+      <Button label="Yes" icon="pi pi-check" @click="deleteDevice" />
+    </template>
+  </Dialog>
 </template>

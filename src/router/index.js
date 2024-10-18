@@ -37,6 +37,11 @@ const router = createRouter({
                     path: '/reports',
                     name: 'reports',
                     component: () => import('@/views/pages/Reports.vue')
+                },
+                {
+                    path: '/messageinfo/:id',
+                    name: 'messageinfo',
+                    component: () => import('@/views/pages/MessageInfo.vue')
                 }
             ]
         },

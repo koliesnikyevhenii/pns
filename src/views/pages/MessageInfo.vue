@@ -13,9 +13,9 @@ const application = reactive({
 const route = useRoute();
 
 const schema = yup.object({
-  applicationName: yup.string().required().max(50),
-  description: yup.string().required().max(50),
-  apiKey: yup.string().required().max(50),
+  applicationName: yup.string().required("'Application Name' required").max(50),
+  description: yup.string().required("'Description' required").max(50),
+  apiKey: yup.string().required("'ApiKey' required").max(50),
 });
 
 const { defineField, handleSubmit, errors, setValues } = useForm({
@@ -64,14 +64,19 @@ const [description, descriptionAttr] = defineField("description");
           </div>
           <div class="flex flex-col gap-2">
             <label for="email1">Description</label>
-            <InputText id="description" type="text" v-model="description" />
+            <InputText
+              id="description"
+              type="text"
+              v-model="description"
+              v-bind="descriptionAttr"
+            />
             <Message severity="error" v-if="errors.description">{{
               errors.description
             }}</Message>
           </div>
           <div class="flex flex-col gap-2">
             <label for="age1">Api Key</label>
-            <InputText id="apiKey" type="text" v-model="apiKey" />
+            <InputText id="apiKey" type="text" v-model="apiKey" v-bind="apiKeyAttr" />
             <Message severity="error" v-if="errors.apiKey">{{ errors.apiKey }}</Message>
           </div>
           <h4>Credentials</h4>

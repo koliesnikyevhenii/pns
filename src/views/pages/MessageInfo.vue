@@ -9,14 +9,13 @@ const route = useRoute();
 onMounted(() => {
   ApplicationService.getApplication(route.params.id).then((response) => {
     application.value = response;
-    console.log(application);
   });
 });
 </script>
 
 <template>
   <div class="font-semibold text-xl mb-12">Message Info {{ $route.params.id }}</div>
-  <div class="flex flex-col md:flex-row gap-8">
+  <div class="flex flex-col md:flex-row gap-8" v-if="application.value">
     <div class="md:w-1/2">
       <div class="card flex flex-col gap-4">
         <div class="font-semibold text-xl">Edit Application</div>
@@ -47,4 +46,5 @@ onMounted(() => {
       </div>
     </div>
   </div>
+  <div v-else>Loading data</div>
 </template>

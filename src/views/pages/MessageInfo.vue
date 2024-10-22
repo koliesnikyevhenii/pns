@@ -9,6 +9,9 @@ const application = reactive({
   applicationName: "",
   apiKey: "",
   description: "",
+  isIOS: true,
+  isAndroid: true,
+  isProd: false,
 });
 const route = useRoute();
 
@@ -44,10 +47,10 @@ const [description, descriptionAttr] = defineField("description");
 </script>
 
 <template>
-  <div class="font-semibold text-xl mb-12">Message Info {{ $route.params.id }}</div>
+  <div class="font-semibold text-xl mb-12">Application Edit {{ $route.params.id }}</div>
   <Form @submit="submitForm">
-    <div class="flex flex-col md:flex-row gap-8" v-if="application.value">
-      <div class="md:w-1/2">
+    <div class="flex flex-col md:flex-row w-full" v-if="application.value">
+      <div class="w-full">
         <div class="card flex flex-col gap-4">
           <div class="font-semibold text-xl">Edit Application</div>
           <div class="flex flex-col gap-2">
@@ -82,6 +85,52 @@ const [description, descriptionAttr] = defineField("description");
           <h4>Credentials</h4>
           <Divider />
 
+          <div class="flex flex-col gap-2">
+            <Fieldset legend="Android Platform" :toggleable="false">
+              <div class="flex flex-col gap-2">
+                <label for="android">Turn On/Off</label>
+                <ToggleSwitch inputId="android" v-model="application.isAndroid" />
+                <label for="serviceAccountFile">Service Account File</label>
+                <InputText
+                  id="serviceAccountFile"
+                  type="text"
+                  v-model="apiKey"
+                  v-bind="apiKeyAttr"
+                />
+              </div>
+            </Fieldset>
+          </div>
+          <div class="flex flex-col gap-2">
+            <Fieldset legend="IOS Platform" :toggleable="false">
+              <div class="flex flex-col gap-2">
+                <label for="ios">Turn On/Off</label>
+                <ToggleSwitch inputId="ios" v-model="application.isIOS" />
+                <label for="p12File">P12 File</label>
+                <InputText
+                  id="p12File"
+                  type="text"
+                  v-model="apiKey"
+                  v-bind="apiKeyAttr"
+                />
+                <label for="password">Password</label>
+                <InputText
+                  id="password"
+                  type="text"
+                  v-model="apiKey"
+                  v-bind="apiKeyAttr"
+                />
+                <label for="password">App Bundle Id</label>
+                <InputText
+                  id="appBundleId"
+                  type="text"
+                  v-model="apiKey"
+                  v-bind="apiKeyAttr"
+                />
+                <label for="prod">Prodcution Environment</label>
+                <ToggleSwitch inputId="prod" v-model="application.isProd" />
+              </div>
+            </Fieldset>
+          </div>
           <Button label="Submit" type="submit" :fluid="false"></Button>
         </div>
       </div>

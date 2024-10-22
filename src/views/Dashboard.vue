@@ -61,7 +61,6 @@ function setColorOptions() {
 }
 
 function editDevice(appId) {
-  console.log(appId);
   router.push({ name: "messageinfo", params: { id: appId } });
 }
 

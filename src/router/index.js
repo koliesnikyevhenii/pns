@@ -14,32 +14,32 @@ const router = createRouter({
                     component: () => import('@/views/Dashboard.vue')
                 },
                 {
-                    path: '/message',
+                    path: '/app/:id/message',
                     name: 'message',
                     component: () => import('@/views/pages/SendMessage.vue')
                 },
                 {
-                    path: '/messagebyalias',
+                    path: '/app/:id/messagebyalias',
                     name: 'messagebyalias',
                     component: () => import('@/views/pages/MessageAlias.vue')
                 },
                 {
-                    path: '/devices',
+                    path: '/app/:id/devices',
                     name: 'devices',
                     component: () => import('@/views/pages/Devices.vue')
                 },
                 {
-                    path: '/actions',
+                    path: '/app/:id/actions',
                     name: 'actions',
                     component: () => import('@/views/pages/Actions.vue')
                 },
                 {
-                    path: '/reports',
+                    path: '/app/:id/reports',
                     name: 'reports',
                     component: () => import('@/views/pages/Reports.vue')
                 },
                 {
-                    path: '/messageinfo/:id',
+                    path: '/app/:id/messageinfo/',
                     name: 'messageinfo',
                     component: () => import('@/views/pages/MessageInfo.vue')
                 }

@@ -1,7 +1,11 @@
 <script setup>
-import { ref } from "vue";
-
+import { ref, computed } from "vue";
+import { useRoute } from "vue-router";
 import AppMenuItem from "./AppMenuItem.vue";
+
+const route = useRoute();
+// Show menu only on specific routes
+const showMenu = computed(() => route.path.includes("/app/"));
 
 const model = ref([
   {
@@ -18,24 +22,24 @@ const model = ref([
           {
             label: "Send Message",
             icon: "pi pi-fw pi-bookmark",
-            to: "/message",
+            to: "/app/23/message",
           },
           {
             label: "Message by Alias",
             icon: "pi pi-fw pi-bookmark",
-            to: "/messagebyalias",
+            to: "/app/23/messagebyalias",
           },
         ],
       },
       {
         label: "Devices",
         icon: "pi pi-fw pi-bookmark",
-        to: "/devices",
+        to: "/app/23/devices",
       },
       {
         label: "Actions",
         icon: "pi pi-fw pi-bookmark",
-        to: "/actions",
+        to: "/app/23/actions",
       },
       {
         label: "Reports",
@@ -44,7 +48,7 @@ const model = ref([
           {
             label: "Messages by tags",
             icon: "pi pi-fw pi-bookmark",
-            to: "/reports",
+            to: "/app/23/reports",
           },
         ],
       },
@@ -54,7 +58,7 @@ const model = ref([
 </script>
 
 <template>
-  <ul class="layout-menu">
+  <ul class="layout-menu" v-if="showMenu">
     <template v-for="(item, i) in model" :key="item">
       <app-menu-item v-if="!item.separator" :item="item" :index="i"></app-menu-item>
       <li v-if="item.separator" class="menu-separator"></li>

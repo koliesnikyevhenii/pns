@@ -1,11 +1,14 @@
 <script setup>
 import { useLayout } from "@/layout/composables/layout";
 import { onMounted, ref, watch } from "vue";
+import { useRouter } from "vue-router";
 
 const { getPrimary, getSurface, isDarkTheme } = useLayout();
 
 const lineData = ref(null);
 const lineOptions = ref(null);
+const router = useRouter();
+const appId = ref(24); // TODO: make it dynamic based on server request
 
 function setColorOptions() {
   const documentStyle = getComputedStyle(document.documentElement);
@@ -57,6 +60,11 @@ function setColorOptions() {
   };
 }
 
+function editDevice(appId) {
+  console.log(appId);
+  router.push({ name: "messageinfo", params: { id: appId } });
+}
+
 onMounted(() => {
   setColorOptions();
 });
@@ -79,7 +87,7 @@ watch(
           outlined
           rounded
           class="mr-2"
-          @click="editDevice(data)"
+          @click="editDevice(appId)"
         />
         <Button
           icon="pi pi-trash"

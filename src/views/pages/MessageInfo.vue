@@ -12,6 +12,10 @@ const application = reactive({
   isIOS: true,
   isAndroid: true,
   isProd: false,
+  p12File: "",
+  appBundleId: "",
+  password: "",
+  serviceAccountFile: "",
 });
 const route = useRoute();
 
@@ -90,13 +94,15 @@ const [description, descriptionAttr] = defineField("description");
               <div class="flex flex-col gap-2">
                 <label for="android">Turn On/Off</label>
                 <ToggleSwitch inputId="android" v-model="application.isAndroid" />
-                <label for="serviceAccountFile">Service Account File</label>
-                <InputText
-                  id="serviceAccountFile"
-                  type="text"
-                  v-model="apiKey"
-                  v-bind="apiKeyAttr"
-                />
+                <template v-if="application.isAndroid">
+                  <label for="serviceAccountFile">Service Account File</label>
+                  <InputText
+                    id="serviceAccountFile"
+                    type="text"
+                    v-model="apiKey"
+                    v-bind="apiKeyAttr"
+                  />
+                </template>
               </div>
             </Fieldset>
           </div>
@@ -104,30 +110,36 @@ const [description, descriptionAttr] = defineField("description");
             <Fieldset legend="IOS Platform" :toggleable="false">
               <div class="flex flex-col gap-2">
                 <label for="ios">Turn On/Off</label>
-                <ToggleSwitch inputId="ios" v-model="application.isIOS" />
-                <label for="p12File">P12 File</label>
-                <InputText
-                  id="p12File"
-                  type="text"
-                  v-model="apiKey"
-                  v-bind="apiKeyAttr"
+                <ToggleSwitch
+                  inputId="ios"
+                  v-model="application.isIOS"
+                  v-on:change="IOSChange"
                 />
-                <label for="password">Password</label>
-                <InputText
-                  id="password"
-                  type="text"
-                  v-model="apiKey"
-                  v-bind="apiKeyAttr"
-                />
-                <label for="password">App Bundle Id</label>
-                <InputText
-                  id="appBundleId"
-                  type="text"
-                  v-model="apiKey"
-                  v-bind="apiKeyAttr"
-                />
-                <label for="prod">Prodcution Environment</label>
-                <ToggleSwitch inputId="prod" v-model="application.isProd" />
+                <template v-if="application.isIOS">
+                  <label for="p12File">P12 File</label>
+                  <InputText
+                    id="p12File"
+                    type="text"
+                    v-model="apiKey"
+                    v-bind="apiKeyAttr"
+                  />
+                  <label for="password">Password</label>
+                  <InputText
+                    id="password"
+                    type="text"
+                    v-model="apiKey"
+                    v-bind="apiKeyAttr"
+                  />
+                  <label for="password">App Bundle Id</label>
+                  <InputText
+                    id="appBundleId"
+                    type="text"
+                    v-model="apiKey"
+                    v-bind="apiKeyAttr"
+                  />
+                  <label for="prod">Prodcution Environment</label>
+                  <ToggleSwitch inputId="prod" v-model="application.isProd" />
+                </template>
               </div>
             </Fieldset>
           </div>

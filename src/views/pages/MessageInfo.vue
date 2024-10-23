@@ -5,6 +5,9 @@ import { ApplicationService } from "@/service/ApplicationService";
 import { useForm, useField, Form } from "vee-validate";
 import * as yup from "yup";
 
+const IOS = 2;
+const AndroidOS = 1;
+
 const application = reactive({
   applicationName: "",
   apiKey: "",
@@ -17,6 +20,7 @@ const application = reactive({
   password: "",
   serviceAccountFile: "",
 });
+
 const route = useRoute();
 
 const schema = yup.object({
@@ -43,11 +47,40 @@ onMounted(() => {
       description: application.value.description,
     });
   });
+
+  ApplicationService.getApplicationCreds(route.params.id).then((response) => {
+    let appCreds = response.credentials;
+    let android = appCreds.filter((creds) => creds.os == AndroidOS)[0] || null;
+    let ios = appCreds.filter((creds) => creds.os == IOS)[0] || null;
+
+    setValues({
+      isIOS: ios != null,
+      isAndroid: android != null,
+      isProd: ios.environment == 2, //TODO: check this moment on server side why is 2 ??!!
+      p12File: ios?.fileData,
+      p12FileName: ios?.key,
+      appBundleId: ios?.appBundleId,
+      password: ios?.password,
+      serviceAccountFile: android?.fileData,
+      serviceAccountFileName: android?.key,
+    });
+  });
 });
 
 const [applicationName, applicationNameAttr] = defineField("applicationName");
 const [apiKey, apiKeyAttr] = defineField("apiKey");
+const [isIOS, isIOSAttr] = defineField("isIOS");
+const [isAndroid, isAndroidAttr] = defineField("isAndroid");
 const [description, descriptionAttr] = defineField("description");
+const [isProd, isProdAttr] = defineField("isProd");
+const [p12File, p12FileAttr] = defineField("p12File");
+const [p12FileName, p12FilenameAttr] = defineField("p12FileName");
+const [appBundleId, appBundleIdAttr] = defineField("appBundleId");
+const [password, passwordAttr] = defineField("password");
+const [serviceAccountFile, serviceAccountFileAttr] = defineField("serviceAccountFile");
+const [serviceAccountFileName, serviceAccountFileNameAttr] = defineField(
+  "serviceAccountFileName"
+);
 </script>
 
 <template>
@@ -93,14 +126,18 @@ const [description, descriptionAttr] = defineField("description");
             <Fieldset legend="Android Platform" :toggleable="false">
               <div class="flex flex-col gap-2">
                 <label for="android">Turn On/Off</label>
-                <ToggleSwitch inputId="android" v-model="application.isAndroid" />
-                <template v-if="application.isAndroid">
+                <ToggleSwitch
+                  inputId="android"
+                  v-model="isAndroid"
+                  v-bind="isAndroidAttr"
+                />
+                <template v-if="isAndroid">
                   <label for="serviceAccountFile">Service Account File</label>
                   <InputText
                     id="serviceAccountFile"
                     type="text"
-                    v-model="apiKey"
-                    v-bind="apiKeyAttr"
+                    v-model="serviceAccountFile"
+                    v-bind="serviceAccountFileAttr"
                   />
                 </template>
               </div>
@@ -110,35 +147,31 @@ const [description, descriptionAttr] = defineField("description");
             <Fieldset legend="IOS Platform" :toggleable="false">
               <div class="flex flex-col gap-2">
                 <label for="ios">Turn On/Off</label>
-                <ToggleSwitch
-                  inputId="ios"
-                  v-model="application.isIOS"
-                  v-on:change="IOSChange"
-                />
-                <template v-if="application.isIOS">
+                <ToggleSwitch inputId="ios" v-model="isIOS" v-bind="isIOSAttr" />
+                <template v-if="isIOS">
                   <label for="p12File">P12 File</label>
                   <InputText
                     id="p12File"
                     type="text"
-                    v-model="apiKey"
-                    v-bind="apiKeyAttr"
+                    v-model="p12File"
+                    v-bind="p12FileAttr"
                   />
                   <label for="password">Password</label>
                   <InputText
                     id="password"
                     type="text"
-                    v-model="apiKey"
-                    v-bind="apiKeyAttr"
+                    v-model="password"
+                    v-bind="passwordAttr"
                   />
                   <label for="password">App Bundle Id</label>
                   <InputText
                     id="appBundleId"
                     type="text"
-                    v-model="apiKey"
-                    v-bind="apiKeyAttr"
+                    v-model="appBundleId"
+                    v-bind="appBundleIdAttr"
                   />
                   <label for="prod">Prodcution Environment</label>
-                  <ToggleSwitch inputId="prod" v-model="application.isProd" />
+                  <ToggleSwitch inputId="prod" v-model="isProd" v-bind="isProdAttr" />
                 </template>
               </div>
             </Fieldset>

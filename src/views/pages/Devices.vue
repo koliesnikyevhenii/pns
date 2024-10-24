@@ -48,13 +48,7 @@ function confirmDeleteDevice(dev) {
       v-model:filters="filters1"
       :loading="loading1"
       :filters="filters1"
-      :globalFilterFields="[
-        'name',
-        'country.name',
-        'representative.name',
-        'balance',
-        'status',
-      ]"
+      :globalFilterFields="['Tags', 'os', 'deviceToken', 'alias']"
       showGridlines
       :rowsPerPageOptions="[5, 10, 25]"
       currentPageReportTemplate="Showing {first} to {last} of {totalRecords} products"

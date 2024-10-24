@@ -1,8 +1,9 @@
 <script setup>
-import { reactive, onMounted } from "vue";
+import { reactive, onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
 import { ApplicationService } from "@/service/ApplicationService";
 import { useForm, useField, Form } from "vee-validate";
+import { useToast } from "primevue/usetoast";
 import * as yup from "yup";
 
 const IOS = 2;
@@ -22,6 +23,7 @@ const application = reactive({
 });
 
 const route = useRoute();
+const toast = useToast();
 
 const schema = yup.object({
   applicationName: yup.string().required("'Application Name' required").max(50),
@@ -36,7 +38,43 @@ const { defineField, handleSubmit, errors, setValues } = useForm({
 
 const submitForm = handleSubmit((values) => {
   console.log("Form submitted:", values);
+
+  toast.add({
+    severity: "info",
+    summary: "Success",
+    detail: "Form data send",
+    life: 3000,
+  });
 });
+
+const onUploadp12 = (event) => {
+  console.log("I am here");
+  const file = event.files[0]; // Get the selected file
+  if (file) {
+    setValues({ p12FileName: file.name });
+    convertFileToBase64(file, p12File); // Convert the file to Base64
+  }
+};
+
+// Convert the file to Base64 using FileReader
+const convertFileToBase64 = (file, prop) => {
+  const reader = new FileReader();
+  reader.readAsDataURL(file); // Read the file as a Data URL (Base64)
+
+  // When the file is successfully read, store the result (Base64 string)
+  reader.onload = () => {
+    prop.value = reader.result;
+  };
+
+  reader.onerror = (error) => {
+    toast.add({
+      severity: "error",
+      summary: "Error reading file",
+      detail: error,
+      life: 3000,
+    });
+  };
+};
 
 onMounted(() => {
   ApplicationService.getApplication(route.params.id).then((response) => {
@@ -63,6 +101,7 @@ onMounted(() => {
       password: ios?.password,
       serviceAccountFile: android?.fileData,
       serviceAccountFileName: android?.key,
+      uploadedFiles: [],
     });
   });
 });
@@ -81,6 +120,8 @@ const [serviceAccountFile, serviceAccountFileAttr] = defineField("serviceAccount
 const [serviceAccountFileName, serviceAccountFileNameAttr] = defineField(
   "serviceAccountFileName"
 );
+
+//const [uploadedFiles, uploadedFilesAttr] = defineField("uploadedFiles");
 </script>
 
 <template>
@@ -150,12 +191,18 @@ const [serviceAccountFileName, serviceAccountFileNameAttr] = defineField(
                 <ToggleSwitch inputId="ios" v-model="isIOS" v-bind="isIOSAttr" />
                 <template v-if="isIOS">
                   <label for="p12File">P12 File</label>
-                  <InputText
-                    id="p12File"
-                    type="text"
-                    v-model="p12File"
-                    v-bind="p12FileAttr"
+
+                  <FileUpload
+                    mode="basic"
+                    name="f12file"
+                    :maxFileSize="10000000"
+                    :customUpload="true"
+                    @select="onUploadp12"
+                    class="custom-file-upload"
                   />
+
+                  <p v-if="p12FileName">Selected File: {{ p12FileName }}</p>
+
                   <label for="password">Password</label>
                   <InputText
                     id="password"
@@ -181,5 +228,14 @@ const [serviceAccountFileName, serviceAccountFileNameAttr] = defineField(
       </div>
     </div>
     <div v-else>Loading data</div>
+    <Toast />
   </Form>
 </template>
+
+<style scoped>
+/* Hide the native file input (which shows "No file chosen") */
+.custom-file-upload input[type="file"] {
+  display: none;
+}
+</style>
+>

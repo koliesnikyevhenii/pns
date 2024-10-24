@@ -2,7 +2,7 @@
 import { reactive, onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
 import { ApplicationService } from "@/service/ApplicationService";
-import { useForm, useField, Form } from "vee-validate";
+import { useForm, Form } from "vee-validate";
 import { useToast } from "primevue/usetoast";
 import * as yup from "yup";
 
@@ -57,7 +57,7 @@ const onUploadp12 = (event) => {
 const onUploadServiceAccount = (event) => {
   const file = event.files[0]; // Get the selected file
   if (file) {
-    setValues({ serviceAccountFile: file.name });
+    setValues({ serviceAccountFileName: file.name });
     convertFileToBase64(file, serviceAccountFile); // Convert the file to Base64
   }
 };
@@ -127,12 +127,11 @@ const [serviceAccountFileName, serviceAccountFileNameAttr] = defineField(
 </script>
 
 <template>
-  <div class="font-semibold text-xl mb-12">Application Edit {{ $route.params.id }}</div>
   <Form @submit="submitForm">
-    <div class="flex flex-col md:flex-row w-full" v-if="application.value">
-      <div class="w-full">
+    <div class="flex flex-col md:flex-row gap-8" v-if="application.value">
+      <div class="md:w-1/2">
         <div class="card flex flex-col gap-4">
-          <div class="font-semibold text-xl">Edit Application</div>
+          <div class="font-semibold text-xl">Edit Application {{ $route.params.id }}</div>
           <div class="flex flex-col gap-2">
             <label for="name1">Application Name</label>
             <InputText
@@ -168,7 +167,7 @@ const [serviceAccountFileName, serviceAccountFileNameAttr] = defineField(
           <div class="flex flex-col gap-2">
             <Fieldset legend="Android Platform" :toggleable="false">
               <div class="flex flex-col gap-2">
-                <label for="android">Turn On/Off</label>
+                <label for="android">Enabled?</label>
                 <ToggleSwitch
                   inputId="android"
                   v-model="isAndroid"
@@ -194,7 +193,7 @@ const [serviceAccountFileName, serviceAccountFileNameAttr] = defineField(
           <div class="flex flex-col gap-2">
             <Fieldset legend="IOS Platform" :toggleable="false">
               <div class="flex flex-col gap-2">
-                <label for="ios">Turn On/Off</label>
+                <label for="ios">Enabled?</label>
                 <ToggleSwitch inputId="ios" v-model="isIOS" v-bind="isIOSAttr" />
                 <template v-if="isIOS">
                   <label for="p12File">P12 File</label>
@@ -227,7 +226,9 @@ const [serviceAccountFileName, serviceAccountFileNameAttr] = defineField(
               </div>
             </Fieldset>
           </div>
-          <Button label="Submit" type="submit" :fluid="false"></Button>
+          <div>
+            <Button label="Submit" type="submit" :fluid="false"></Button>
+          </div>
         </div>
       </div>
     </div>
@@ -236,8 +237,11 @@ const [serviceAccountFileName, serviceAccountFileNameAttr] = defineField(
   </Form>
 </template>
 
-<style>
+<style scoped>
 .custom-file-upload input[type="file"] {
   display: none;
+}
+.p-fileupload-basic {
+  justify-content: flex-start;
 }
 </style>

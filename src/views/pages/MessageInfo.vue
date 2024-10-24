@@ -116,14 +116,12 @@ const [isIOS, isIOSAttr] = defineField("isIOS");
 const [isAndroid, isAndroidAttr] = defineField("isAndroid");
 const [description, descriptionAttr] = defineField("description");
 const [isProd, isProdAttr] = defineField("isProd");
-const [p12File, p12FileAttr] = defineField("p12File");
-const [p12FileName, p12FilenameAttr] = defineField("p12FileName");
+const [p12File] = defineField("p12File");
+const [p12FileName] = defineField("p12FileName");
 const [appBundleId, appBundleIdAttr] = defineField("appBundleId");
 const [password, passwordAttr] = defineField("password");
-const [serviceAccountFile, serviceAccountFileAttr] = defineField("serviceAccountFile");
-const [serviceAccountFileName, serviceAccountFileNameAttr] = defineField(
-  "serviceAccountFileName"
-);
+const [serviceAccountFile] = defineField("serviceAccountFile");
+const [serviceAccountFileName] = defineField("serviceAccountFileName");
 </script>
 
 <template>
@@ -237,11 +235,15 @@ const [serviceAccountFileName, serviceAccountFileNameAttr] = defineField(
   </Form>
 </template>
 
-<style scoped>
+<style>
 .custom-file-upload input[type="file"] {
   display: none;
 }
 .p-fileupload-basic {
   justify-content: flex-start;
+}
+
+.p-fileupload span[files] {
+  display: none;
 }
 </style>

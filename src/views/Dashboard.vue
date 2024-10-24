@@ -61,7 +61,11 @@ function setColorOptions() {
 }
 
 function editDevice(appId) {
-  router.push({ name: "messageinfo", params: { id: appId } });
+  router.push({ name: "application", params: { id: appId } });
+}
+
+function newDevice() {
+  router.push({ name: "application" });
 }
 
 onMounted(() => {

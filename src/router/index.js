@@ -39,9 +39,14 @@ const router = createRouter({
                     component: () => import('@/views/pages/Reports.vue')
                 },
                 {
-                    path: '/app/:id/messageinfo/',
-                    name: 'messageinfo',
-                    component: () => import('@/views/pages/MessageInfo.vue')
+                    path: '/app/:id/',
+                    name: 'application',
+                    component: () => import('@/views/pages/ApplicationForm.vue')
+                },
+                {
+                    path: '/newapp/',
+                    name: 'newapp',
+                    component: () => import('@/views/pages/ApplicationForm.vue')
                 }
             ]
         },

@@ -1,5 +1,5 @@
 <script setup>
-import { reactive, onMounted, ref } from "vue";
+import { reactive, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { ApplicationService } from "@/service/ApplicationService";
 import { useForm, Form } from "vee-validate";
@@ -11,6 +11,8 @@ const AndroidOS = 1;
 
 const route = useRoute();
 const toast = useToast();
+
+const isNew = route.params.id == null;
 
 const application = reactive({
   applicationName: "",
@@ -81,33 +83,35 @@ const convertFileToBase64 = (file, prop) => {
 };
 
 onMounted(() => {
-  ApplicationService.getApplication(route.params.id).then((response) => {
-    application.value = response;
-    setValues({
-      applicationName: application.value.applicationName,
-      apiKey: application.value.apiKey,
-      description: application.value.description,
+  if (!isNew) {
+    ApplicationService.getApplication(route.params.id).then((response) => {
+      application.value = response;
+      setValues({
+        applicationName: application.value.applicationName,
+        apiKey: application.value.apiKey,
+        description: application.value.description,
+      });
     });
-  });
 
-  ApplicationService.getApplicationCreds(route.params.id).then((response) => {
-    let appCreds = response.credentials;
-    let android = appCreds.filter((creds) => creds.os == AndroidOS)[0] || null;
-    let ios = appCreds.filter((creds) => creds.os == IOS)[0] || null;
+    ApplicationService.getApplicationCreds(route.params.id).then((response) => {
+      let appCreds = response.credentials;
+      let android = appCreds.filter((creds) => creds.os == AndroidOS)[0] || null;
+      let ios = appCreds.filter((creds) => creds.os == IOS)[0] || null;
 
-    setValues({
-      isIOS: ios != null,
-      isAndroid: android != null,
-      isProd: ios.environment == 2, //TODO: check this moment on server side why is 2 ??!!
-      p12File: ios?.fileData,
-      p12FileName: ios?.key,
-      appBundleId: ios?.appBundleId,
-      password: ios?.password,
-      serviceAccountFile: android?.fileData,
-      serviceAccountFileName: android?.key,
-      uploadedFiles: [],
+      setValues({
+        isIOS: ios != null,
+        isAndroid: android != null,
+        isProd: ios.environment == 2, //TODO: check this moment on server side why is 2 ??!!
+        p12File: ios?.fileData,
+        p12FileName: ios?.key,
+        appBundleId: ios?.appBundleId,
+        password: ios?.password,
+        serviceAccountFile: android?.fileData,
+        serviceAccountFileName: android?.key,
+        uploadedFiles: [],
+      });
     });
-  });
+  }
 });
 
 const [applicationName, applicationNameAttr] = defineField("applicationName");
@@ -126,12 +130,14 @@ const [serviceAccountFileName] = defineField("serviceAccountFileName");
 
 <template>
   <Form @submit="submitForm">
-    <div class="flex flex-col md:flex-row gap-8" v-if="application.value">
+    <div class="flex flex-col md:flex-row gap-8" v-if="true">
       <div class="md:w-1/2">
         <div class="card flex flex-col gap-4">
-          <div class="font-semibold text-xl">Edit Application {{ $route.params.id }}</div>
+          <div class="font-semibold text-xl">
+            {{ isNew ? "New Application" : "Edit Application " + $route.params.id }}
+          </div>
           <div class="flex flex-col gap-2">
-            <label for="name1">Application Name</label>
+            <label v-if="!isNew" for="name1">Application Name</label>
             <InputText
               id="applicationName"
               type="text"
@@ -235,14 +241,16 @@ const [serviceAccountFileName] = defineField("serviceAccountFileName");
   </Form>
 </template>
 
-<style>
+<style scoped>
 .custom-file-upload input[type="file"] {
   display: none;
 }
 .p-fileupload-basic {
   justify-content: flex-start;
 }
+</style>
 
+<style>
 .p-fileupload span[files] {
   display: none;
 }

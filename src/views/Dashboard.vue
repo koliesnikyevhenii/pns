@@ -65,7 +65,7 @@ function editDevice(appId) {
 }
 
 function newDevice() {
-  router.push({ name: "application" });
+  router.push({ name: "newapp" });
 }
 
 onMounted(() => {
@@ -117,7 +117,12 @@ watch(
     </div>
     <div class="col-span-12 xl:col-span-6">
       <div class="card">
-        <Button icon="pi pi-plus" class="btn btn-primary col-12" aria-label="Filter" />
+        <Button
+          icon="pi pi-plus"
+          class="btn btn-primary col-12"
+          aria-label="Filter"
+          @click="newDevice"
+        />
       </div>
     </div>
   </div>

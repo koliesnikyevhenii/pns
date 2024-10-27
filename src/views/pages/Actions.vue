@@ -8,7 +8,9 @@ const filters = ref(null);
 const loading = ref(null);
 const actionItems = ref(null);
 const action = ref({});
+const newAction = ref({});
 const deleteActionDialog = ref(false);
+const createActionDialog = ref(false);
 const route = useRoute();
 
 function confirmDeleteAction(action) {
@@ -16,7 +18,25 @@ function confirmDeleteAction(action) {
   deleteActionDialog.value = true;
 }
 
-//TODO: add delete logic
+function showActionDialog() {
+  createActionDialog.value = true;
+}
+
+function deleteAction() {
+  //TODO: add delete logic
+  console.log("deleteAction");
+}
+
+function createAction() {
+  //TODO: add delete logic
+  console.log("createAction");
+  resetAction();
+}
+
+function resetAction() {
+  newAction.value = {};
+  createActionDialog.value = false;
+}
 
 onBeforeMount(() => {
   ActionService.getActions(route.params.id).then((response) => {
@@ -37,6 +57,16 @@ function initFilters() {
 <template>
   <div class="card">
     <div class="font-semibold text-xl mb-4">Actions</div>
+    <div class="flex mb-4">
+      <Button
+        type="button"
+        icon="pi pi-file-plus"
+        label="Add Action"
+        outlined
+        @click="showActionDialog"
+      />
+    </div>
+
     <DataTable
       stripedRows
       sortable
@@ -62,6 +92,7 @@ function initFilters() {
             outlined
             @click="clearFilter()"
           />
+
           <IconField>
             <InputIcon>
               <i class="pi pi-search" />
@@ -117,6 +148,26 @@ function initFilters() {
     <template #footer>
       <Button label="No" icon="pi pi-times" text @click="deleteActionDialog = false" />
       <Button label="Yes" icon="pi pi-check" @click="deleteAction" />
+    </template>
+  </Dialog>
+
+  <Dialog
+    v-model:visible="createActionDialog"
+    :style="{ width: '450px' }"
+    header="Create Action"
+    :modal="true"
+  >
+    <div class="flex items-center gap-4">
+      <div class="flex flex-col gap-2">
+        <label for="actionName">Action Name</label>
+        <InputText id="actionName" type="text" />
+        <label for="description">Description</label>
+        <InputText id="description" type="text" />
+      </div>
+    </div>
+    <template #footer>
+      <Button label="No" icon="pi pi-times" text @click="resetAction" />
+      <Button label="Yes" icon="pi pi-check" @click="createAction" />
     </template>
   </Dialog>
 </template>

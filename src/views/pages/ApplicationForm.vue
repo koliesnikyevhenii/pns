@@ -137,7 +137,7 @@ const [serviceAccountFileName] = defineField("serviceAccountFileName");
             {{ isNew ? "New Application" : "Edit Application " + $route.params.id }}
           </div>
           <div class="flex flex-col gap-2">
-            <label v-if="!isNew" for="name1">Application Name</label>
+            <label v-if="!isNew" for="applicationName">Application Name</label>
             <InputText
               id="applicationName"
               type="text"
@@ -149,7 +149,7 @@ const [serviceAccountFileName] = defineField("serviceAccountFileName");
             }}</Message>
           </div>
           <div class="flex flex-col gap-2">
-            <label for="email1">Description</label>
+            <label for="description">Description</label>
             <InputText
               id="description"
               type="text"
@@ -161,7 +161,7 @@ const [serviceAccountFileName] = defineField("serviceAccountFileName");
             }}</Message>
           </div>
           <div class="flex flex-col gap-2">
-            <label for="age1">Api Key</label>
+            <label for="apiKey">Api Key</label>
             <InputText id="apiKey" type="text" v-model="apiKey" v-bind="apiKeyAttr" />
             <Message severity="error" v-if="errors.apiKey">{{ errors.apiKey }}</Message>
           </div>

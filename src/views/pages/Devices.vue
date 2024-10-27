@@ -9,6 +9,8 @@ const devices = ref(null);
 const device = ref({});
 const deleteDeviceDialog = ref(false);
 
+//TODO: add delete logic
+
 function getSeverity(status) {
   return "info";
 }

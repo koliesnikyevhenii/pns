@@ -7,11 +7,16 @@ import { useRoute } from "vue-router";
 const filters = ref(null);
 const loading = ref(null);
 const actionItems = ref(null);
+const action = ref({});
+const deleteActionDialog = ref(false);
 const route = useRoute();
 
-function getSeverity(status) {
-  return "info";
+function confirmDeleteAction(action) {
+  action.value = action;
+  deleteActionDialog.value = true;
 }
+
+//TODO: add delete logic
 
 onBeforeMount(() => {
   ActionService.getActions(route.params.id).then((response) => {
@@ -95,4 +100,23 @@ function initFilters() {
       </Column>
     </DataTable>
   </div>
+
+  <Dialog
+    v-model:visible="deleteActionDialog"
+    :style="{ width: '450px' }"
+    header="Confirm"
+    :modal="true"
+  >
+    <div class="flex items-center gap-4">
+      <i class="pi pi-exclamation-triangle !text-3xl" />
+      <span v-if="action"
+        >Are you sure you want to delete <b>{{ action.action }}</b
+        >?</span
+      >
+    </div>
+    <template #footer>
+      <Button label="No" icon="pi pi-times" text @click="deleteActionDialog = false" />
+      <Button label="Yes" icon="pi pi-check" @click="deleteAction" />
+    </template>
+  </Dialog>
 </template>

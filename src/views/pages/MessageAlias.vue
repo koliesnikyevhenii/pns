@@ -9,10 +9,6 @@ const loading = ref(null);
 const messageItems = ref(null);
 const route = useRoute();
 
-function getSeverity(status) {
-  return "info";
-}
-
 onBeforeMount(() => {
   MessageService.getMessages(route.params.id).then((response) => {
     loading.value = false;

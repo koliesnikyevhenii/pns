@@ -1,3 +1,23 @@
+<script setup>
+import { PayloadService } from "@/service/PayloadService";
+import { onBeforeMount, ref, computed } from "vue";
+import { useForm, Form } from "vee-validate";
+
+const actionItems = ref(null);
+const selectedAction = ref(null);
+const action = computed(() => {
+  return `{
+    "action": "${selectedAction.value?.action ?? ""}"
+}`;
+});
+
+onBeforeMount(() => {
+  PayloadService.getActions().then((response) => {
+    actionItems.value = response.data;
+  });
+});
+</script>
+
 <template>
   <Fluid>
     <Form>
@@ -7,23 +27,25 @@
           <Fieldset legend="Message" :toggleable="false">
             <div class="flex flex-col md:flex-row gap-4">
               <div class="flex flex-wrap gap-2 w-full">
-                <label for="firstname2">Header</label>
+                <label for="header">Header</label>
                 <InputText id="header" type="text" />
               </div>
               <div class="flex flex-wrap gap-2 w-full">
-                <label for="lastname2">Actions</label>
+                <label for="action">Actions</label>
                 <Select
                   id="action"
-                  optionLabel="name"
-                  placeholder="Select One"
+                  optionLabel="action"
+                  :options="actionItems"
+                  v-model="selectedAction"
                   class="w-full"
+                  placeholder="none"
                 ></Select>
               </div>
             </div>
 
             <div class="flex flex-wrap">
               <label for="payload">Payload:</label>
-              <Textarea id="payload" rows="3" />
+              <Textarea id="payload" rows="3" v-model="action" />
             </div>
 
             <div class="flex flex-wrap">

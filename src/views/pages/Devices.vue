@@ -50,7 +50,7 @@ function confirmDeleteDevice(dev) {
       v-model:filters="filters1"
       :loading="loading1"
       :filters="filters1"
-      :globalFilterFields="['Tags', 'os', 'deviceToken', 'alias']"
+      :globalFilterFields="['Tags', 'os', 'deviceToken', 'alias', 'status']"
       showGridlines
       :rowsPerPageOptions="[5, 10, 25]"
       currentPageReportTemplate="Showing {first} to {last} of {totalRecords} products"
@@ -79,7 +79,7 @@ function confirmDeleteDevice(dev) {
           {{ data.alias }}
         </template>
       </Column>
-      <Column header="Device Token" style="min-width: 12rem" :sortable="true">
+      <Column header="Device Token" style="min-width: 12rem">
         <template #body="{ data }">
           <div class="flex items-center gap-2">
             <span class="text-wrap text-break" style="word-break: break-all">{{
@@ -88,7 +88,12 @@ function confirmDeleteDevice(dev) {
           </div>
         </template>
       </Column>
-      <Column :sortable="true" header="Operation System" style="min-width: 14rem">
+      <Column
+        :sortable="true"
+        field="os"
+        header="Operation System"
+        style="min-width: 14rem"
+      >
         <template #body="{ data }">
           <div class="flex items-center gap-2">
             <span>{{ data.os }}</span>
@@ -104,7 +109,7 @@ function confirmDeleteDevice(dev) {
       </Column>
       <Column
         :sortable="true"
-        field="verified"
+        field="status"
         header="Enabled?"
         dataType="boolean"
         bodyClass="text-center"

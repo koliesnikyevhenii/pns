@@ -15,7 +15,8 @@
         "primevue": "^4.0.0",
         "vee-validate": "^4.14.3",
         "vue": "^3.4.34",
-        "vue-router": "^4.4.0"
+        "vue-router": "^4.4.0",
+        "vuex": "^4.0.2"
     },
     "devDependencies": {
         "@primevue/auto-import-resolver": "^4.0.1",

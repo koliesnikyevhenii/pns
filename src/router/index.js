@@ -1,5 +1,6 @@
 import AppLayout from '@/layout/AppLayout.vue';
 import { createRouter, createWebHistory } from 'vue-router';
+import store from '@/store';
 
 const router = createRouter({
     history: createWebHistory(),
@@ -11,41 +12,49 @@ const router = createRouter({
                 {
                     path: '/',
                     name: 'dashboard',
+                    meta: { requiresAuth: true },
                     component: () => import('@/views/Dashboard.vue')
                 },
                 {
                     path: '/app/:id/message',
                     name: 'message',
+                    meta: { requiresAuth: true },
                     component: () => import('@/views/pages/SendMessage.vue')
                 },
                 {
                     path: '/app/:id/messagebyalias',
                     name: 'messagebyalias',
+                    meta: { requiresAuth: true },
                     component: () => import('@/views/pages/MessageAlias.vue')
                 },
                 {
                     path: '/app/:id/devices',
                     name: 'devices',
+                    meta: { requiresAuth: true },
                     component: () => import('@/views/pages/Devices.vue')
                 },
                 {
                     path: '/app/:id/actions',
                     name: 'actions',
+                    meta: { requiresAuth: true },
                     component: () => import('@/views/pages/Actions.vue')
                 },
                 {
                     path: '/app/:id/reports',
                     name: 'reports',
+                    meta: { requiresAuth: true },
                     component: () => import('@/views/pages/Reports.vue')
                 },
                 {
                     path: '/app/:id/',
                     name: 'application',
+                    meta: { requiresAuth: true },
                     component: () => import('@/views/pages/ApplicationForm.vue')
                 },
                 {
                     path: '/newapp/',
                     name: 'newapp',
+                    meta: { requiresAuth: true },
                     component: () => import('@/views/pages/ApplicationForm.vue')
                 }
             ]
@@ -71,6 +80,18 @@ const router = createRouter({
             component: () => import('@/views/pages/auth/Error.vue')
         }
     ]
+});
+
+// Global navigation guard
+router.beforeEach((to, from, next) => {
+    if (to.meta.requiresAuth && !store.getters.isAuthenticated) {
+        // Redirect to login if not authenticated
+        // next('/login');
+        console.log('redirect to login');
+        next();
+    } else {
+        next(); // Continue to the route
+    }
 });
 
 export default router;

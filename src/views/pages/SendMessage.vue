@@ -8,6 +8,7 @@ const selectedAction = ref(null);
 const scheduleRadio = ref("1");
 const sendMode = ref("1");
 const tags = ref(null);
+
 const action = computed(() => {
   return `{
     "action": "${selectedAction.value?.action ?? ""}"
@@ -17,6 +18,11 @@ const action = computed(() => {
 onBeforeMount(() => {
   PayloadService.getActions().then((response) => {
     actionItems.value = response.data;
+    //tags.value = [response.data, []];
+  });
+
+  PayloadService.getTags().then((response) => {
+    tags.value = [response.data.map((item) => ({ name: item })), []];
   });
 });
 </script>
@@ -119,13 +125,16 @@ onBeforeMount(() => {
               <InputText id="payload" />
             </div>
             <div class="flex flex-wrap" v-else>
-              <PickList v-model="tags" dataKey="id" breakpoint="1400px">
+              <PickList v-model="tags" breakpoint="1400px" dataKey="id">
                 <template #option="{ option }">
                   {{ option.name }}
                 </template>
               </PickList>
             </div>
           </Fieldset>
+          <div class="mb-4">
+            <Button label="Submit" type="submit" :fluid="false"></Button>
+          </div>
         </div>
       </div>
     </Form>

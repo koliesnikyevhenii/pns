@@ -1,5 +1,5 @@
 export const PayloadService = {
-    getActionsRequest() {
+    getActionsData() {
         return {
             code: 0,
             data: [
@@ -62,7 +62,18 @@ export const PayloadService = {
         };
     },
 
+    getTagsData() {
+        return {
+            code: 0,
+            data: ['ANDROID_DEVICE', 'INSTITUTION_SYMBOL:570713', 'INSTITUTION_SYMBOL:770875', 'INTERNAL', 'IOS_DEVICE']
+        };
+    },
+
+    getTags() {
+        return Promise.resolve(this.getTagsData());
+    },
+
     getActions() {
-        return Promise.resolve(this.getActionsRequest());
+        return Promise.resolve(this.getActionsData());
     }
 };

@@ -60,7 +60,7 @@ const router = createRouter({
             ]
         },
         {
-            path: '/pages/notfound',
+            path: '/:pathMatch(.*)*', // Catch-all route for undefined paths
             name: 'notfound',
             component: () => import('@/views/pages/NotFound.vue')
         },

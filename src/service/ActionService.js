@@ -64,5 +64,13 @@ export const ActionService = {
 
     getActions(appId) {
         return Promise.resolve(this.getData(appId));
+    },
+
+    createAction(action) {
+        return Promise.resolve(action);
+    },
+
+    deleteAction(actionId) {
+        return Promise.resolve(actionId);
     }
 };

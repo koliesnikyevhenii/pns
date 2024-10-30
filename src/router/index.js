@@ -68,16 +68,6 @@ const router = createRouter({
             path: '/auth/login',
             name: 'login',
             component: () => import('@/views/pages/auth/Login.vue')
-        },
-        {
-            path: '/auth/access',
-            name: 'accessDenied',
-            component: () => import('@/views/pages/auth/Access.vue')
-        },
-        {
-            path: '/auth/error',
-            name: 'error',
-            component: () => import('@/views/pages/auth/Error.vue')
         }
     ]
 });
@@ -86,9 +76,7 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
     if (to.meta.requiresAuth && !store.getters.isAuthenticated) {
         // Redirect to login if not authenticated
-        // next('/login');
-        console.log('redirect to login');
-        next();
+        next('auth/login');
     } else {
         next(); // Continue to the route
     }

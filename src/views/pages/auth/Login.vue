@@ -1,10 +1,24 @@
 <script setup>
 import FloatingConfigurator from "@/components/FloatingConfigurator.vue";
 import { ref } from "vue";
+import { useRouter } from "vue-router";
+import { useStore } from "vuex";
 
 const username = ref("");
 const password = ref("");
-const checked = ref(false);
+const store = useStore();
+const router = useRouter();
+
+const loginUser = async () => {
+  try {
+    //const response = await api.post("/login", { username: "user", password: "password" });
+    const token = "token stub"; //response.data.token;
+    store.dispatch("login", token); // Save token in Vuex
+    router.push("/"); // Redirect to dashboard after login
+  } catch (error) {
+    console.error("Login failed:", error);
+  }
+};
 </script>
 
 <template>
@@ -96,7 +110,13 @@ const checked = ref(false);
               fluid
               :feedback="false"
             ></Password>
-            <Button label="Sign In" class="w-full" as="router-link" to="/"></Button>
+            <Button
+              label="Sign In"
+              class="w-full"
+              as="router-link"
+              to="/"
+              @click="loginUser"
+            ></Button>
           </div>
         </div>
       </div>

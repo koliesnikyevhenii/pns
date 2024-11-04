@@ -2,12 +2,16 @@
 import { PayloadService } from "@/service/PayloadService";
 import { onBeforeMount, ref, computed } from "vue";
 import { Form } from "vee-validate";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
 
 const actionItems = ref(null);
 const selectedAction = ref(null);
 const scheduleRadio = ref("1");
 const sendMode = ref("1");
 const tags = ref(null);
+const payload = ref('');
 
 const action = computed(() => {
   return `{
@@ -16,6 +20,11 @@ const action = computed(() => {
 });
 
 onBeforeMount(() => {
+  if (router.options?.history?.state?.alias) {
+    sendMode.value = "2";
+    payload.value = router.options.history.state.alias;
+  }
+
   PayloadService.getActions().then((response) => {
     actionItems.value = response.data;
     //tags.value = [response.data, []];
@@ -102,18 +111,18 @@ onBeforeMount(() => {
               <div class="flex items-center">
                 <RadioButton
                   v-model="sendMode"
-                  inputId="sendMode2"
+                  inputId="sendMode3"
                   name="sendMode"
-                  value="2"
+                  value="3"
                 />
                 <label for="scheduleRadio2" class="ml-1 pe-5">Send by Tag(s)</label>
               </div>
               <div class="flex items-center">
                 <RadioButton
                   v-model="sendMode"
-                  inputId="sendMode3"
+                  inputId="sendMode2"
                   name="sendMode"
-                  value="3"
+                  value="2"
                 />
                 <label for="scheduleRadio2" class="ml-1 pe-5">Send to Alias(es)</label>
               </div>
@@ -122,7 +131,7 @@ onBeforeMount(() => {
           <Fieldset legend="Send by Api" :toggleable="false" v-if="sendMode != 1">
             <div class="flex flex-wrap" v-if="sendMode == 2">
               <label for="payload">Payload:</label>
-              <InputText id="payload" />
+              <InputText id="payload" v-model="payload"/>
             </div>
             <div class="flex flex-wrap" v-else>
               <PickList v-model="tags" breakpoint="1400px" dataKey="id">

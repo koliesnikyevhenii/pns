@@ -32,5 +32,22 @@ export const DeviceService = {
 
     getDevices() {
         return Promise.resolve(this.getData());
+    },
+
+    deleteDevice(deviceAlias) {
+        let payload = {
+            alias: deviceAlias,
+            apiKey: 'apiKey'
+        };
+
+        return Promise.resolve(payload);
+    },
+
+    changeDeviceStatus(device) {
+        if (device.status) {
+            console.log("Enable")
+        } else {
+            console.log("Disable");
+        }
     }
 };

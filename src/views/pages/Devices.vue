@@ -1,7 +1,10 @@
 <script setup>
 import { DeviceService } from "@/service/DeviceService";
 import { FilterMatchMode } from "@primevue/core/api";
-import { onBeforeMount, reactive, ref } from "vue";
+import { onBeforeMount, ref } from "vue";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
 
 const filters1 = ref(null);
 const loading1 = ref(null);
@@ -9,10 +12,24 @@ const devices = ref(null);
 const device = ref({});
 const deleteDeviceDialog = ref(false);
 
-//TODO: add delete logic
+function deleteDevice(deviceAlias) {
+  DeviceService.deleteDevice(deviceAlias).then((response) => {
+    deleteDeviceDialog.value = false;
+  })
+}
 
-function getSeverity(status) {
-  return "info";
+function sendMessage(deviceAlias) {
+  router.push({
+    path: '/app/23/message',
+    state: {
+      alias: deviceAlias
+    }
+  })
+}
+
+function toggleDeviceStatus(device) {
+  device.status = !device.status;
+  DeviceService.changeDeviceStatus(device);
 }
 
 onBeforeMount(() => {
@@ -102,8 +119,8 @@ function confirmDeleteDevice(dev) {
       </Column>
       <Column header="Tags" style="min-width: 12rem">
         <template #body="{ data }">
-          <span v-for="(tag, index) in data.tags" :key="index" class="gap-1">
-            <Tag :value="tag" :severity="getSeverity(tag)" />
+          <span v-for="(tag, index) in data.tags" :key="index" class="gap-1 m-1">
+            <Tag class="my-1" :value="tag" severity="info" />
           </span>
         </template>
       </Column>
@@ -116,13 +133,9 @@ function confirmDeleteDevice(dev) {
         style="min-width: 8rem"
       >
         <template #body="{ data }">
-          <i
-            class="pi"
-            :class="{
-              'pi-check-circle text-green-500 ': data.status,
-              'pi-times-circle text-red-500': !data.status,
-            }"
-          ></i>
+          <ToggleSwitch 
+          :model-value="data.status == 1" 
+          @change="toggleDeviceStatus(data)"/>
         </template>
       </Column>
       <Column
@@ -137,7 +150,7 @@ function confirmDeleteDevice(dev) {
             outlined
             rounded
             class="mr-2"
-            @click="editDevice(data)"
+            @click="sendMessage(data.alias)"
           />
           <Button
             icon="pi pi-trash"
@@ -166,7 +179,7 @@ function confirmDeleteDevice(dev) {
     </div>
     <template #footer>
       <Button label="No" icon="pi pi-times" text @click="deleteDeviceDialog = false" />
-      <Button label="Yes" icon="pi pi-check" @click="deleteDevice" />
+      <Button label="Yes" icon="pi pi-check" @click="deleteDevice(device.alias)" />
     </template>
   </Dialog>
 </template>

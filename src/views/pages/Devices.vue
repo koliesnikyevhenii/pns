@@ -1,7 +1,7 @@
 <script setup>
 import { DeviceService } from "@/service/DeviceService";
 import { FilterMatchMode } from "@primevue/core/api";
-import { onBeforeMount, ref } from "vue";
+import { onBeforeMount, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
@@ -11,6 +11,18 @@ const loading1 = ref(null);
 const devices = ref(null);
 const device = ref({});
 const deleteDeviceDialog = ref(false);
+const page = ref(0);
+const pageSize = ref(10);
+const totalRecords = ref(0);
+
+function loadDevices() {
+  loading1.value = true;
+  DeviceService.getDevices(page.value, pageSize.value).then((response) => {
+    loading1.value = false;
+    devices.value = response.data;
+    totalRecords.value = response.recordsTotal;
+  });
+}
 
 function deleteDevice(deviceAlias) {
   DeviceService.deleteDevice(deviceAlias).then((response) => {
@@ -32,15 +44,6 @@ function toggleDeviceStatus(device) {
   DeviceService.changeDeviceStatus(device);
 }
 
-onBeforeMount(() => {
-  DeviceService.getDevices().then((response) => {
-    loading1.value = false;
-    devices.value = response.data;
-  });
-
-  initFilters1();
-});
-
 function initFilters1() {
   filters1.value = {
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -51,6 +54,16 @@ function confirmDeleteDevice(dev) {
   device.value = dev;
   deleteDeviceDialog.value = true;
 }
+
+watch(pageSize, () => {
+  loadDevices();
+  console.log(totalRecords.value)
+})
+
+onBeforeMount(() => {
+  loadDevices();
+  initFilters1();
+});
 </script>
 
 <template>
@@ -61,7 +74,7 @@ function confirmDeleteDevice(dev) {
       sortable
       :value="devices"
       :paginator="true"
-      :rows="10"
+      :rows="pageSize"
       dataKey="id"
       :rowHover="true"
       v-model:filters="filters1"
@@ -69,8 +82,9 @@ function confirmDeleteDevice(dev) {
       :filters="filters1"
       :globalFilterFields="['Tags', 'os', 'deviceToken', 'alias', 'status']"
       showGridlines
-      :rowsPerPageOptions="[5, 10, 25]"
-      currentPageReportTemplate="Showing {first} to {last} of {totalRecords} products"
+      :rowsPerPageOptions="[1, 10, 25]"
+      currentPageReportTemplate="Showing {first} to {last} of {totalRecords} devices"
+      @update:rows="(event) => rowsPerPage = event"
     >
       <template #header>
         <div class="flex justify-between">

@@ -2,12 +2,12 @@
 import { useLayout } from '@/layout/composables/layout';
 import { onMounted, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
+import { ApplicationService } from '@/service/ApplicationService';
 import 'chartjs-adapter-date-fns';
-
-import appList from '@/stubs/apps.json';
 
 const { getPrimary, getSurface, isDarkTheme } = useLayout();
 
+const appList = ref([]);
 const chartOptions = ref(null);
 const chartData = ref([]);
 
@@ -54,9 +54,8 @@ function initCharts() {
         }
     };
 
-    //TODO: get appList from server & error handling
-    if (appList.data) {
-        chartData.value = appList.data.map(
+    if (appList.value?.length) {
+        chartData.value = appList.value.map(
             (app) => ({
                 datasets: [
                     {
@@ -81,23 +80,36 @@ function editApp(appId) {
     router.push({ name: 'application', params: { id: appId } });
 }
 
-function deleteApp(app) {
+function deleteApplication(app) {
     selectedApp.value = app;
     deleteAppDialog.value = true;
 }
 
 function confirmDeleteApp(appId) {
-    //TODO: call delete api
-    console.log('delete app ', appId);
+    ApplicationService.deleteApp(appId).then((response) => {
+        if (response?.data == 'OK') {
+            appList.value = appList.value.filter(app => app.id != appId);
+            initCharts();
+        } 
+    })
+    
     deleteAppDialog.value = false;
+}
+
+function deleteApp(appId) {
+    return Promise.resolve(ApplicationService.deleteApp(appId));
 }
 
 function newApp() {
     router.push({ name: 'newapp' });
 }
 
-onMounted(() => {
-    initCharts();
+onMounted(async () => {
+    const apps = await ApplicationService.getApplications();
+    if (apps?.data) {
+        appList.value = apps.data;
+        initCharts();
+    }
 });
 
 watch(
@@ -111,14 +123,14 @@ watch(
 
 <template>
     <div class="grid grid-cols-12 gap-8">
-        <div v-for="(app, index) in appList.data" :key="index" class="col-span-12 xl:col-span-6">
+        <div v-for="(app, index) in appList" :key="index" class="col-span-12 xl:col-span-6">
             <div class="card">
                 <Chart type="line" :data="chartData[index]" :options="chartOptions" class="h-100" />
                 <div class="font-semibold text-xl mt-4 mb-4">{{ app.name }}</div>
                 <div class="mb-4">{{ app.description }}</div>
                 <div class="mb-4">{{ app.apiKey }}</div>
                 <Button icon="pi pi-file-edit" outlined rounded class="mr-2" @click="editApp(app.id)" />
-                <Button icon="pi pi-trash" outlined rounded severity="danger" @click="deleteApp(app)" />
+                <Button icon="pi pi-trash" outlined rounded severity="danger" @click="deleteApplication(app)" />
             </div>
         </div>
 

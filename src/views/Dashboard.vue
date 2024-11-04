@@ -92,12 +92,8 @@ function confirmDeleteApp(appId) {
             initCharts();
         } 
     })
-    
-    deleteAppDialog.value = false;
-}
 
-function deleteApp(appId) {
-    return Promise.resolve(ApplicationService.deleteApp(appId));
+    deleteAppDialog.value = false;
 }
 
 function newApp() {

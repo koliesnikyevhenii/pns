@@ -1,15 +1,9 @@
-import axios from 'axios';
+import AxiosFactory from '@/service/AxiosFactory.js';
 import devicesListStub from '@/stubs/devices.json';
-
-const DEBUG_MODE = import.meta.env.VITE_DEBUG_MODE == 'true';
-
-const axiosBase = axios.create({
-    baseURL: import.meta.env.VITE_PNS_API_BASE_URL
-});
 
 export const DeviceService = {
     async getDevices(page, pageSize) {
-        if (DEBUG_MODE) {
+        if (AxiosFactory.debugMode) {
             return devicesListStub;
         }
 
@@ -19,7 +13,7 @@ export const DeviceService = {
             pageSize: pageSize
         }
 
-        const result = await axiosBase
+        const result = await AxiosFactory.pnsApi
             .post('/devices/paging', body, {
                 params: { includeTags: true }
             })
@@ -30,7 +24,7 @@ export const DeviceService = {
     },
 
     async deleteDevice(deviceAlias) {
-        if (DEBUG_MODE) {
+        if (AxiosFactory.debugMode) {
             return;
         }
 
@@ -39,7 +33,7 @@ export const DeviceService = {
             apiKey: 'dbadec88-44bb-454b-b608-bddb4cd6ae6f'
         }
 
-        const result = await axiosBase
+        const result = await AxiosFactory.pnsApi
             .delete('/devices', body)
             .then((response) => response)
             .catch((error) => console.log(error));
@@ -47,7 +41,7 @@ export const DeviceService = {
     },
 
     async changeDeviceStatus(device) {
-        if (DEBUG_MODE) {
+        if (AxiosFactory.debugMode) {
             return;
         }
 
@@ -58,7 +52,7 @@ export const DeviceService = {
             apiKey : "dbadec88-44bb-454b-b608-bddb4cd6ae6f",
         }
 
-        const result = await axiosBase
+        const result = await AxiosFactory.pnsApi
             .put(url, body)
             .then((response) => response)
             .catch((error) => console.log(error));

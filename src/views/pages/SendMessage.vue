@@ -3,13 +3,14 @@ import { PayloadService } from "@/service/PayloadService";
 import { onBeforeMount, ref, computed } from "vue";
 import { Form } from "vee-validate";
 import { useRouter } from "vue-router";
+import { SendMode, ScheduleMode } from "@/constants/enums"; 
 
 const router = useRouter();
 
 const actionItems = ref(null);
 const selectedAction = ref(null);
-const scheduleRadio = ref("1");
-const sendMode = ref("1");
+const scheduleMode = ref(ScheduleMode.IMMEDIATELY);
+const sendMode = ref(SendMode.EVERYONE);
 const tags = ref(null);
 const payload = ref('');
 
@@ -75,23 +76,23 @@ onBeforeMount(() => {
             <div class="flex flex-wrap">
               <div class="flex items-center">
                 <RadioButton
-                  v-model="scheduleRadio"
-                  inputId="scheduleRadio1"
-                  name="scheduleRadio"
-                  value="1"
+                  v-model="scheduleMode"
+                  :inputId="`scheduleMode${ScheduleMode.IMMEDIATELY}`"
+                  name="scheduleMode"
+                  :value="ScheduleMode.IMMEDIATELY"
                 />
-                <label for="scheduleRadio1" class="ml-1 pe-5"
+                <label :for="`scheduleMode${ScheduleMode.IMMEDIATELY}`" class="ml-1 pe-5"
                   >Begin send immediately</label
                 >
               </div>
               <div class="flex items-center">
                 <RadioButton
-                  v-model="scheduleRadio"
-                  inputId="scheduleRadio2"
-                  name="scheduleRadio"
-                  value="2"
+                  v-model="scheduleMode"
+                  :inputId="`scheduleMode${ScheduleMode.SCHEDULED}`"
+                  name="scheduleMode"
+                  :value="ScheduleMode.SCHEDULED"
                 />
-                <label for="scheduleRadio2" class="ml-1 pe-5"
+                <label :for="`scheduleMode${ScheduleMode.SCHEDULED}`" class="ml-1 pe-5"
                   >Begin send at a particular time</label
                 >
               </div>
@@ -102,34 +103,34 @@ onBeforeMount(() => {
               <div class="flex items-center">
                 <RadioButton
                   v-model="sendMode"
-                  inputId="sendMode1"
+                  :inputId="`sendMode${SendMode.EVERYONE}`"
                   name="sendMode"
-                  value="1"
+                  :value="SendMode.EVERYONE"
                 />
-                <label for="scheduleRadio1" class="ml-1 pe-5">Send to Everyone</label>
+                <label :for="`sendMode${SendMode.EVERYONE}`" class="ml-1 pe-5">Send to Everyone</label>
               </div>
               <div class="flex items-center">
                 <RadioButton
                   v-model="sendMode"
-                  inputId="sendMode3"
+                  :inputId="`sendMode${SendMode.TAG}`"
                   name="sendMode"
-                  value="3"
+                  :value="SendMode.TAG"
                 />
-                <label for="scheduleRadio2" class="ml-1 pe-5">Send by Tag(s)</label>
+                <label :for="`sendMode${SendMode.TAG}`" class="ml-1 pe-5">Send by Tag(s)</label>
               </div>
               <div class="flex items-center">
                 <RadioButton
                   v-model="sendMode"
-                  inputId="sendMode2"
+                  :inputId="`sendMode${SendMode.ALIAS}`"
                   name="sendMode"
-                  value="2"
+                  :value="SendMode.ALIAS"
                 />
-                <label for="scheduleRadio2" class="ml-1 pe-5">Send to Alias(es)</label>
+                <label :for="`sendMode${SendMode.ALIAS}`" class="ml-1 pe-5">Send to Alias(es)</label>
               </div>
             </div>
           </Fieldset>
-          <Fieldset legend="Send by Api" :toggleable="false" v-if="sendMode != 1">
-            <div class="flex flex-wrap" v-if="sendMode == 2">
+          <Fieldset legend="Send by Api" :toggleable="false" v-if="sendMode != SendMode.EVERYONE">
+            <div class="flex flex-wrap" v-if="sendMode == SendMode.ALIAS">
               <label for="payload">Payload:</label>
               <InputText id="payload" v-model="payload"/>
             </div>

@@ -1,6 +1,7 @@
 <script setup>
-import { reactive, onMounted } from 'vue';
+import { reactive, onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
+import { useRouter } from 'vue-router';
 import { ApplicationService } from '@/service/ApplicationService';
 import { useForm, Form } from 'vee-validate';
 import { useToast } from 'primevue/usetoast';
@@ -12,16 +13,20 @@ const AndroidOS = 1;
 const MAX_FILE_SIZE = 4000000;
 
 const route = useRoute();
+const router = useRouter();
 const toast = useToast();
 
 const isNew = route.params.id == null;
+
+const credentialsAndroid = ref(null);
+const credentialsIOS = ref(null);
 
 const application = reactive({
     applicationName: '',
     apiKey: '',
     description: '',
-    isIOS: true,
-    isAndroid: true,
+    isIOS: false,
+    isAndroid: false,
     isProd: false,
     p12File: null,
     appBundleId: '',
@@ -32,7 +37,6 @@ const application = reactive({
 const schema = yup.object({
     applicationName: yup.string().required("'Application Name' required").max(50),
     description: yup.string().required("'Description' required").max(50),
-    apiKey: yup.string().required("'ApiKey' required").max(50),
     isAndroid: yup.boolean(),
     serviceAccountFile: yup.mixed().when('isAndroid', {
         is: true,
@@ -50,12 +54,6 @@ const schema = yup.object({
         then: (p) => p.required("'Password' required").max(50),
         otherwise: (p) => p.notRequired()
     })
-    //TODO: verify if appBundleId should be required
-    // appBundleId: yup.string().when('isIOS', {
-    //     is: true,
-    //     then: (a) => a.required("'App Bundle Id' required").max(50),
-    //     otherwise: (a) => a.notRequired()
-    // })
 });
 
 const { defineField, handleSubmit, errors, setValues } = useForm({
@@ -64,34 +62,38 @@ const { defineField, handleSubmit, errors, setValues } = useForm({
 });
 
 const submitForm = handleSubmit((values) => {
-    console.log('Form submitted:', values);
+    const appRequest = {
+        name: values.applicationName,
+        description: values.description
+    };
 
-    //TODO: handle add & edit
     if (isNew) {
-        const newAppRequest = {
-            name: values.applicationName,
-            description: values.description,
-            apiKey: values.apiKey,
-            credenials: [] //TODO: map credentials
-        };
-        ApplicationService.addApplication(newAppRequest);
-    } else {
-        const editAppRequest = {
-            id: route.params.id,
-            name: values.applicationName,
-            description: values.description,
-            apiKey: values.apiKey,
-            credenials: [] //TODO: map credentials
-        };
-        ApplicationService.editApplication(editAppRequest);
-    }
+        ApplicationService.addApp(appRequest).then((response) => {
+            if (response.data?.id) {
+                toast.add({
+                    severity: 'info',
+                    summary: 'Success',
+                    detail: 'Application created',
+                    life: 3000
+                });
 
-    toast.add({
-        severity: 'info',
-        summary: 'Success',
-        detail: 'Form data send',
-        life: 3000
-    });
+                updateCredentials(response.data, values);
+            }
+        });
+    } else {
+        ApplicationService.editApp(route.params.id, appRequest).then((response) => {
+            if (response.data?.id) {
+                toast.add({
+                    severity: 'info',
+                    summary: 'Success',
+                    detail: 'Application details saved',
+                    life: 3000
+                });
+
+                updateCredentials(response.data, values);
+            }
+        });
+    }
 });
 
 const onUploadp12 = (event) => {
@@ -127,29 +129,97 @@ const convertFileToBase64 = (file, prop) => {
     };
 };
 
+function setAppData(appData) {
+    let appCreds = appData.credentials;
+    let android = appCreds.filter((creds) => creds.os == AndroidOS)[0] || null;
+    let ios = appCreds.filter((creds) => creds.os == IOS)[0] || null;
+
+    setValues({
+        applicationName: appData.name,
+        apiKey: appData.apiKey,
+        description: appData.description,
+        isIOS: ios != null,
+        isAndroid: android != null,
+        isProd: ios?.environment == 2, //TODO: check this moment on server side why is 2 ??!!
+        p12File: ios?.fileData,
+        p12FileName: ios?.key,
+        appBundleId: ios?.appBundleId,
+        password: ios?.password,
+        serviceAccountFile: android?.fileData,
+        serviceAccountFileName: android?.key
+    });
+
+    credentialsAndroid.value = android;
+    credentialsIOS.value = ios;
+}
+
+async function updateCredentials(appData, values) {
+    appData.credentials = [];
+
+    if (values.isAndroid) {
+        const androidCredsRequest = {
+            os: 1,
+            key: values.serviceAccountFileName,
+            fileData: values.serviceAccountFile?.split('base64,')[1] || values.serviceAccountFile
+        };
+
+        const response = await ApplicationService.postCredentials(appData.id, androidCredsRequest);
+        if (response.data) {
+            appData.credentials.push(response.data);
+        }
+    } else if (credentialsAndroid.value) {
+        const response = await ApplicationService.deleteCredentials(appData.id, credentialsAndroid.value);
+        if (response.data == 'OK') {
+            toast.add({
+                severity: 'info',
+                summary: 'Success',
+                detail: 'Android credentials removed',
+                life: 3000
+            });
+        }
+    }
+
+    if (values.isIOS) {
+        const iOSCredsRequest = {
+            os: 2,
+            key: values.p12FileName,
+            fileData: values.p12File?.split('base64,')[1] || values.p12File,
+            password: values.password,
+            appBundleId: values.appBundleId
+        };
+
+        if (values.isProd) {
+            iOSCredsRequest.environment = 2; //TODO: verify why 2 on server side
+        }
+
+        const response = await ApplicationService.postCredentials(appData.id, iOSCredsRequest);
+        if (response.data) {
+            appData.credentials.push(response.data);
+        }
+    } else if (credentialsIOS.value) {
+        const response = await ApplicationService.deleteCredentials(appData.id, credentialsIOS.value);
+        if (response.data == 'OK') {
+            toast.add({
+                severity: 'info',
+                summary: 'Success',
+                detail: 'iOS credentials removed',
+                life: 3000
+            });
+        }
+    }
+
+    if (isNew) {
+        router.push({ name: 'application', params: { id: appData.id } });
+    }
+
+    setAppData(appData);
+}
+
 onMounted(async () => {
     if (!isNew) {
         var appResponse = await ApplicationService.getApplication(route.params.id);
         if (appResponse?.data) {
-            let appCreds = appResponse.data.credentials;
-            let android = appCreds.filter((creds) => creds.os == AndroidOS)[0] || null;
-            let ios = appCreds.filter((creds) => creds.os == IOS)[0] || null;
-
-            setValues({
-                applicationName: appResponse.data.name,
-                apiKey: appResponse.data.apiKey,
-                description: appResponse.data.description,
-                isIOS: ios != null,
-                isAndroid: android != null,
-                isProd: ios.environment == 2, //TODO: check this moment on server side why is 2 ??!!
-                p12File: ios?.fileData,
-                p12FileName: ios?.key,
-                appBundleId: ios?.appBundleId,
-                password: ios?.password,
-                serviceAccountFile: android?.fileData,
-                serviceAccountFileName: android?.key,
-                uploadedFiles: []
-            });
+            setAppData(appResponse.data);
         }
     }
 });
@@ -188,7 +258,7 @@ const [serviceAccountFileName] = defineField('serviceAccountFileName');
                     </div>
                     <div class="flex flex-col gap-2">
                         <label for="apiKey">Api Key</label>
-                        <InputText id="apiKey" type="text" v-model="apiKey" v-bind="apiKeyAttr" />
+                        <InputText id="apiKey" type="text" :readonly="true" v-model="apiKey" v-bind="apiKeyAttr" />
                         <Message severity="error" v-if="errors.apiKey">{{ errors.apiKey }}</Message>
                     </div>
                     <h4>Credentials</h4>

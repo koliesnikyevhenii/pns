@@ -1,76 +1,79 @@
-import axios from 'axios';
+import AxiosFactory from '@/service/AxiosFactory.js';
 import appListStub from '@/stubs/apps.json';
 import appStub from '@/stubs/app.json';
-
-const DEBUG_MODE = import.meta.env.VITE_DEBUG_MODE == 'true';
-
-const axiosBase = axios.create({
-    baseURL: import.meta.env.VITE_PNS_API_BASE_URL
-    //withCredentials: true //TODO: api authorization
-});
+import credsAndroid from '@/stubs/credsAndroid.json';
+import credsiOS from '@/stubs/credsiOS.json';
 
 export const ApplicationService = {
     async getApplications() {
-        if (DEBUG_MODE) {
+        if (AxiosFactory.debugMode) {
             return appListStub;
         }
 
-        const result = await axiosBase.get('apps', { params: { includeChart: true } });
+        const result = await AxiosFactory.pnsApi.get('apps', { params: { includeChart: true } });
         return result.data;
     },
 
     async getApplication(id) {
-        if (DEBUG_MODE) {
+        if (AxiosFactory.debugMode) {
             return appStub;
         }
 
-        const result = await axiosBase.get(`apps/${id}`);
+        const result = await AxiosFactory.pnsApi.get(`apps/${id}`);
         return result.data;
     },
 
-    addApplication(app) {
-        //if (DEBUG_MODE) {
-        return {
-            code: 0,
-            data: {
-                id: 53,
-                apiKey: '49c38617-adbb-4895-9d8c-3bb5af06b319',
-                credentials: [],
-                messagesPerDay: null,
-                name: 'App name',
-                description: 'App description'
-            }
-        };
-        //}
+    async addApplication(app) {
+        if (AxiosFactory.debugMode) {
+            return appStub;
+        }
 
-        //const result = axiosBase.post(`apps/${id}`, app);
+        const result = await AxiosFactory.pnsApi.post(`apps`, app);
+        return result.data;
     },
 
-    editApplication(app) {
-        //if (DEBUG_MODE) {
-        return {
-            code: 0,
-            data: {
-                id: 53,
-                apiKey: '49c38617-adbb-4895-9d8c-3bb5af06b319',
-                credentials: [],
-                messagesPerDay: null,
-                name: 'App name',
-                description: 'App description'
-            }
-        };
-        //}
+    async editApplication(id, app) {
+        if (AxiosFactory.debugMode) {
+            return appStub;
+        }
 
-        //const result = axiosBase.put(`apps/${id}`, app);
+        const result = await AxiosFactory.pnsApi.put(`apps/${id}`, app);
+        return result.data;
     },
 
-    deleteApplication(id) {
-        if (DEBUG_MODE) {
+    async deleteApplication(id, app) {
+        if (AxiosFactory.debugMode) {
             return { code: 0, data: 'OK' };
         }
 
-        const result = axiosBase.delete(`apps/${id}`);
+        const result = await AxiosFactory.pnsApi.delete(`apps/${id}`, app);
         return result.data;
+    },
+
+    async postCredentials(id, creds) {
+        if (AxiosFactory.debugMode) {
+            return creds?.os == 1 ? credsAndroid : credsiOS;
+        }
+
+        const result = await AxiosFactory.pnsApi.post(`apps/${id}/credentials`, creds);
+        return result.data;
+    },
+
+    async deleteCredentials(id, creds) {
+        if (AxiosFactory.debugMode) {
+            return { code: 0, data: 'OK' };
+        }
+
+        const result = await AxiosFactory.pnsApi.delete(`apps/${id}/credentials`, { data: creds });
+        return result.data;
+    },
+
+    addApp(app) {
+        return Promise.resolve(ApplicationService.addApplication(app));
+    },
+
+    editApp(appId, app) {
+        return Promise.resolve(ApplicationService.editApplication(appId, app));
     },
 
     deleteApp(appId) {

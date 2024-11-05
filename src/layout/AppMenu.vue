@@ -17,37 +17,37 @@ const model = ref([
     items: [
       {
         label: "Messages",
-        icon: "pi pi-fw pi-bookmark",
+        icon: "pi pi-fw pi-envelope",
         items: [
           {
             label: "Send Message",
-            icon: "pi pi-fw pi-bookmark",
+            icon: "pi pi-fw pi-directions",
             to: "/app/23/message",
           },
           {
             label: "Message by Alias",
-            icon: "pi pi-fw pi-bookmark",
+            icon: "pi pi-fw pi-book",
             to: "/app/23/messagebyalias",
           },
         ],
       },
       {
         label: "Devices",
-        icon: "pi pi-fw pi-bookmark",
+        icon: "pi pi-fw pi-tablet",
         to: "/app/23/devices",
       },
       {
         label: "Actions",
-        icon: "pi pi-fw pi-bookmark",
+        icon: "pi pi-fw pi-star",
         to: "/app/23/actions",
       },
       {
         label: "Reports",
-        icon: "pi pi-fw pi-bookmark",
+        icon: "pi pi-fw pi-folder",
         items: [
           {
             label: "Messages by tags",
-            icon: "pi pi-fw pi-bookmark",
+            icon: "pi pi-fw pi-book",
             to: "/app/23/reports",
           },
         ],

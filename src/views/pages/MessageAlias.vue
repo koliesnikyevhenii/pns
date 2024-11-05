@@ -52,13 +52,6 @@ function initFilters() {
     >
       <template #header>
         <div class="flex justify-between">
-          <Button
-            type="button"
-            icon="pi pi-filter-slash"
-            label="Clear"
-            outlined
-            @click="clearFilter()"
-          />
           <IconField>
             <InputIcon>
               <i class="pi pi-search" />

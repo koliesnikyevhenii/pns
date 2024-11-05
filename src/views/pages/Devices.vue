@@ -12,7 +12,7 @@ const devices = ref(null);
 const device = ref({});
 const deleteDeviceDialog = ref(false);
 const page = ref(0);
-const pageSize = ref(2);
+const pageSize = ref(10);
 const totalRecords = ref(0);
 
 function loadDevices() {
@@ -87,7 +87,7 @@ onBeforeMount(() => {
       :filters="filters"
       :globalFilterFields="['Tags', 'os', 'deviceToken', 'alias', 'status']"
       showGridlines
-      :rowsPerPageOptions="[2, 10, 25]"
+      :rowsPerPageOptions="[5, 10, 25]"
       currentPageReportTemplate="Showing {first} to {last} of {totalRecords} devices"
       @update:rows="(event) => pageSize = event"
       @page="(event) => page = event.page"

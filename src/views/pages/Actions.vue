@@ -11,7 +11,7 @@ const route = useRoute();
 const toast = useToast();
 
 const filters = ref(null);
-const loading = ref(null);
+const loading = ref(false);
 const actionItems = ref(null);
 const action = ref({});
 const deleteActionDialog = ref(false);
@@ -31,16 +31,15 @@ const { defineField, handleSubmit, handleReset, errors } = useForm({
 });
 
 const submitForm = handleSubmit((values) => {
-  ActionService.createAction(values).then((response) => {
-    console.log(response);
-  });
-
-  toast.add({
-    severity: "info",
-    summary: "Success",
-    detail: "Form data send",
-    life: 3000,
-  });
+  ActionService.createAction(values).then(() => {
+    toast.add({
+      severity: "info",
+      summary: "Success",
+      detail: "Action created",
+      life: 3000,
+    });
+    loadActions();
+  })
 
   resetForm();
 });
@@ -58,9 +57,9 @@ function showActionDialog() {
 }
 
 function deleteAction() {
-  ActionService.deleteAction(action.value.id).then((response) => {
-    console.log(response);
+  ActionService.deleteAction(action.value.id).then(() => {
     deleteActionDialog.value = false;
+    loadActions();
   });
 }
 
@@ -69,12 +68,16 @@ function resetForm() {
   createActionDialog.value = false;
 }
 
-onBeforeMount(() => {
+function loadActions() {
+  loading.value = true;
   ActionService.getActions(route.params.id).then((response) => {
     loading.value = false;
     actionItems.value = response.data;
   });
+}
 
+onBeforeMount(() => {
+  loadActions();
   initFilters();
 });
 

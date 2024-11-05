@@ -1,76 +1,61 @@
+import axios from 'axios';
+import actionsListStub from '@/stubs/actions.json';
+
+const DEBUG_MODE = import.meta.env.VITE_DEBUG_MODE == 'true';
+
+const axiosBase = axios.create({
+    baseURL: import.meta.env.VITE_PNS_API_BASE_URL
+});
+
 export const ActionService = {
-    getData(appId) {
-        return {
-            code: 0,
-            data: [
-                {
-                    id: 12,
-                    action: 'RegisterExams',
-                    description: 'Deep link to register exams tab in exams screen'
-                },
-                {
-                    id: 13,
-                    action: 'PassedExams',
-                    description: 'Deep link to passed exams tab in exams screen'
-                },
-                {
-                    id: 14,
-                    action: 'TestGrades',
-                    description: 'Deep link to questionnaire tab in grades screen'
-                },
-                {
-                    id: 15,
-                    action: 'FinalGrades',
-                    description: 'Deep link to final grades tab in grades screen'
-                },
-                {
-                    id: 16,
-                    action: 'Adjustments',
-                    description: 'Deep link to adjustments screen'
-                },
-                {
-                    id: 17,
-                    action: 'Vacations',
-                    description: 'Deep link to vacations screen'
-                },
-                {
-                    id: 18,
-                    action: 'Trips',
-                    description: 'Deep link to trips screen'
-                },
-                {
-                    id: 19,
-                    action: 'Archive',
-                    description: 'Deep link to archive screen'
-                },
-                {
-                    id: 20,
-                    action: 'Simulator',
-                    description: 'Deep link to simulator screen'
-                },
-                {
-                    id: 21,
-                    action: 'Messages',
-                    description: 'Deep link to messages screen'
-                },
-                {
-                    id: 22,
-                    action: 'Settings',
-                    description: 'Deep link to messages screen'
-                }
-            ]
+    async getActions() {
+        if (DEBUG_MODE) {
+            return actionsListStub;
+        }
+
+        const body = {
+            apiKey: "dbadec88-44bb-454b-b608-bddb4cd6ae6f",
+        }
+
+        const result = await axiosBase
+            .post('/payload/actions', body)
+            .then((response) => response)
+            .catch((error) => console.log(error));
+
+        return result.data;
+    },
+
+    async createAction(action) {
+        if (DEBUG_MODE) {
+            return;
+        }
+        const body = {
+            action: action.actionName,
+            description: action.description,
+            apiKey: "dbadec88-44bb-454b-b608-bddb4cd6ae6f",
+        }
+
+        const result = await axiosBase
+            .post('/payload/actions/create', body)
+            .then((response) => response)
+            .catch((error) => console.log(error));
+
+        return result.data;
+    },
+
+    async deleteAction(actionId) {
+        if (DEBUG_MODE) {
+            return;
+        }
+        const body = {
+            apiKey: 'dbadec88-44bb-454b-b608-bddb4cd6ae6f',
         };
-    },
 
-    getActions(appId) {
-        return Promise.resolve(this.getData(appId));
-    },
+        const result = await axiosBase
+            .delete(`/payload/actions/${actionId}`, { data: body })
+            .then((response) => response)
+            .catch((error) => console.log(error));
 
-    createAction(action) {
-        return Promise.resolve(action);
-    },
-
-    deleteAction(actionId) {
-        return Promise.resolve(actionId);
+        return result.data;
     }
 };

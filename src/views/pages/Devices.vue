@@ -1,28 +1,48 @@
 <script setup>
 import { DeviceService } from "@/service/DeviceService";
 import { FilterMatchMode } from "@primevue/core/api";
-import { onBeforeMount, reactive, ref } from "vue";
+import { onBeforeMount, ref, watch } from "vue";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
 
 const filters1 = ref(null);
 const loading1 = ref(null);
 const devices = ref(null);
 const device = ref({});
 const deleteDeviceDialog = ref(false);
+const page = ref(0);
+const pageSize = ref(10);
+const totalRecords = ref(0);
 
-//TODO: add delete logic
-
-function getSeverity(status) {
-  return "info";
-}
-
-onBeforeMount(() => {
-  DeviceService.getDevices().then((response) => {
+function loadDevices() {
+  loading1.value = true;
+  DeviceService.getDevices(page.value, pageSize.value).then((response) => {
     loading1.value = false;
     devices.value = response.data;
+    totalRecords.value = response.recordsTotal;
   });
+}
 
-  initFilters1();
-});
+function deleteDevice(deviceAlias) {
+  DeviceService.deleteDevice(deviceAlias).then((response) => {
+    deleteDeviceDialog.value = false;
+  })
+}
+
+function sendMessage(deviceAlias) {
+  router.push({
+    path: '/app/23/message',
+    state: {
+      alias: deviceAlias
+    }
+  })
+}
+
+function toggleDeviceStatus(device) {
+  device.status = !device.status;
+  DeviceService.changeDeviceStatus(device);
+}
 
 function initFilters1() {
   filters1.value = {
@@ -34,6 +54,16 @@ function confirmDeleteDevice(dev) {
   device.value = dev;
   deleteDeviceDialog.value = true;
 }
+
+watch(pageSize, () => {
+  loadDevices();
+  console.log(totalRecords.value)
+})
+
+onBeforeMount(() => {
+  loadDevices();
+  initFilters1();
+});
 </script>
 
 <template>
@@ -44,7 +74,7 @@ function confirmDeleteDevice(dev) {
       sortable
       :value="devices"
       :paginator="true"
-      :rows="10"
+      :rows="pageSize"
       dataKey="id"
       :rowHover="true"
       v-model:filters="filters1"
@@ -52,8 +82,9 @@ function confirmDeleteDevice(dev) {
       :filters="filters1"
       :globalFilterFields="['Tags', 'os', 'deviceToken', 'alias', 'status']"
       showGridlines
-      :rowsPerPageOptions="[5, 10, 25]"
-      currentPageReportTemplate="Showing {first} to {last} of {totalRecords} products"
+      :rowsPerPageOptions="[1, 10, 25]"
+      currentPageReportTemplate="Showing {first} to {last} of {totalRecords} devices"
+      @update:rows="(event) => rowsPerPage = event"
     >
       <template #header>
         <div class="flex justify-between">
@@ -102,8 +133,8 @@ function confirmDeleteDevice(dev) {
       </Column>
       <Column header="Tags" style="min-width: 12rem">
         <template #body="{ data }">
-          <span v-for="(tag, index) in data.tags" :key="index" class="gap-1">
-            <Tag :value="tag" :severity="getSeverity(tag)" />
+          <span v-for="(tag, index) in data.tags" :key="index" class="gap-1 m-1">
+            <Tag class="my-1" :value="tag" severity="info" />
           </span>
         </template>
       </Column>
@@ -116,13 +147,9 @@ function confirmDeleteDevice(dev) {
         style="min-width: 8rem"
       >
         <template #body="{ data }">
-          <i
-            class="pi"
-            :class="{
-              'pi-check-circle text-green-500 ': data.status,
-              'pi-times-circle text-red-500': !data.status,
-            }"
-          ></i>
+          <ToggleSwitch 
+          :model-value="data.status == 1" 
+          @change="toggleDeviceStatus(data)"/>
         </template>
       </Column>
       <Column
@@ -137,7 +164,7 @@ function confirmDeleteDevice(dev) {
             outlined
             rounded
             class="mr-2"
-            @click="editDevice(data)"
+            @click="sendMessage(data.alias)"
           />
           <Button
             icon="pi pi-trash"
@@ -166,7 +193,7 @@ function confirmDeleteDevice(dev) {
     </div>
     <template #footer>
       <Button label="No" icon="pi pi-times" text @click="deleteDeviceDialog = false" />
-      <Button label="Yes" icon="pi pi-check" @click="deleteDevice" />
+      <Button label="Yes" icon="pi pi-check" @click="deleteDevice(device.alias)" />
     </template>
   </Dialog>
 </template>

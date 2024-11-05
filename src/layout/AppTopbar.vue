@@ -1,23 +1,32 @@
 <script setup>
 import { useLayout } from "@/layout/composables/layout";
 import AppConfigurator from "./AppConfigurator.vue";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import { useStore } from "vuex";
+import { computed } from "vue";
 
 const { onMenuToggle, toggleDarkMode, isDarkTheme } = useLayout();
 const store = useStore();
 const router = useRouter();
 
+const route = useRoute();
+
 const logoutUser = () => {
   store.dispatch("logout"); // Clears the token and auth state
   router.push("/auth/login"); // Redirect to login page
 };
+
+const showMenu = computed(() => route.path.includes("/app/"));
 </script>
 
 <template>
   <div class="layout-topbar">
     <div class="layout-topbar-logo-container">
-      <button class="layout-menu-button layout-topbar-action" @click="onMenuToggle">
+      <button
+        class="layout-menu-button layout-topbar-action"
+        @click="onMenuToggle"
+        v-if="showMenu"
+      >
         <i class="pi pi-bars"></i>
       </button>
       <router-link to="/" class="layout-topbar-logo">

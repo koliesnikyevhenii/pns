@@ -6,19 +6,19 @@ import { useRouter } from "vue-router";
 
 const router = useRouter();
 
-const filters1 = ref(null);
-const loading1 = ref(null);
+const filters = ref(null);
+const isLoading = ref(false);
 const devices = ref(null);
 const device = ref({});
 const deleteDeviceDialog = ref(false);
 const page = ref(0);
-const pageSize = ref(10);
+const pageSize = ref(2);
 const totalRecords = ref(0);
 
 function loadDevices() {
-  loading1.value = true;
+  isLoading.value = true;
   DeviceService.getDevices(page.value, pageSize.value).then((response) => {
-    loading1.value = false;
+    isLoading.value = false;
     devices.value = response.data;
     totalRecords.value = response.recordsTotal;
   });
@@ -44,10 +44,14 @@ function toggleDeviceStatus(device) {
   DeviceService.changeDeviceStatus(device);
 }
 
-function initFilters1() {
-  filters1.value = {
+function initFilters() {
+  filters.value = {
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
   };
+}
+
+function clearFilter() {
+  initFilters();
 }
 
 function confirmDeleteDevice(dev) {
@@ -55,14 +59,13 @@ function confirmDeleteDevice(dev) {
   deleteDeviceDialog.value = true;
 }
 
-watch(pageSize, () => {
+watch([page, pageSize], () => {
   loadDevices();
-  console.log(totalRecords.value)
 })
 
 onBeforeMount(() => {
   loadDevices();
-  initFilters1();
+  initFilters();
 });
 </script>
 
@@ -74,17 +77,20 @@ onBeforeMount(() => {
       sortable
       :value="devices"
       :paginator="true"
+      :lazy="true"
+      :totalRecords="totalRecords"
       :rows="pageSize"
       dataKey="id"
       :rowHover="true"
-      v-model:filters="filters1"
-      :loading="loading1"
-      :filters="filters1"
+      v-model:filters="filters"
+      :loading="isLoading"
+      :filters="filters"
       :globalFilterFields="['Tags', 'os', 'deviceToken', 'alias', 'status']"
       showGridlines
-      :rowsPerPageOptions="[1, 10, 25]"
+      :rowsPerPageOptions="[2, 10, 25]"
       currentPageReportTemplate="Showing {first} to {last} of {totalRecords} devices"
-      @update:rows="(event) => rowsPerPage = event"
+      @update:rows="(event) => pageSize = event"
+      @page="(event) => page = event.page"
     >
       <template #header>
         <div class="flex justify-between">
@@ -93,13 +99,13 @@ onBeforeMount(() => {
             icon="pi pi-filter-slash"
             label="Clear"
             outlined
-            @click="clearFilter()"
+            @click="clearFilter"
           />
           <IconField>
             <InputIcon>
               <i class="pi pi-search" />
             </InputIcon>
-            <InputText v-model="filters1['global'].value" placeholder="Keyword Search" />
+            <InputText v-model="filters['global'].value" placeholder="Keyword Search" />
           </IconField>
         </div>
       </template>

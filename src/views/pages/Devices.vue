@@ -27,16 +27,16 @@ function loadDevices() {
 function deleteDevice(deviceAlias) {
   DeviceService.deleteDevice(deviceAlias).then((response) => {
     deleteDeviceDialog.value = false;
-  })
+  });
 }
 
 function sendMessage(deviceAlias) {
   router.push({
-    path: '/app/23/message',
+    path: "/app/23/message",
     state: {
-      alias: deviceAlias
-    }
-  })
+      alias: deviceAlias,
+    },
+  });
 }
 
 function toggleDeviceStatus(device) {
@@ -48,10 +48,6 @@ function initFilters() {
   filters.value = {
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
   };
-}
-
-function clearFilter() {
-  initFilters();
 }
 
 function confirmDeleteDevice(dev) {
@@ -94,13 +90,6 @@ onBeforeMount(() => {
     >
       <template #header>
         <div class="flex justify-between">
-          <Button
-            type="button"
-            icon="pi pi-filter-slash"
-            label="Clear"
-            outlined
-            @click="clearFilter"
-          />
           <IconField>
             <InputIcon>
               <i class="pi pi-search" />
@@ -153,9 +142,10 @@ onBeforeMount(() => {
         style="min-width: 8rem"
       >
         <template #body="{ data }">
-          <ToggleSwitch 
-          :model-value="data.status == 1" 
-          @change="toggleDeviceStatus(data)"/>
+          <ToggleSwitch
+            :model-value="data.status == 1"
+            @change="toggleDeviceStatus(data)"
+          />
         </template>
       </Column>
       <Column

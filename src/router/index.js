@@ -40,7 +40,7 @@ const router = createRouter({
                     component: () => import('@/views/pages/Actions.vue')
                 },
                 {
-                    path: '/app/:id/reports',
+                    path: '/app/:appId/reports/:reportId',
                     name: 'reports',
                     meta: { requiresAuth: true },
                     component: () => import('@/views/pages/Reports.vue')

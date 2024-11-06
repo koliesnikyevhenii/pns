@@ -1,77 +1,42 @@
+import AxiosFactory from '@/service/AxiosFactory.js';
+import reportListStub from '@/stubs/report.json';
+import reportTypesStub from '@/stubs/reportTypes.json';
+
 export const ReportService = {
-    getData(appId) {
-        return {
-            code: 0,
-            data: {
-                results: [
-                    {
-                        Day: '26.12.2023 00:00:00',
-                        TagName: 'INSTITUTION_SYMBOL:770875',
-                        NumberOfMessageSent: '5',
-                        PageNumber: '1'
-                    },
-                    {
-                        Day: '26.12.2023 00:00:00',
-                        TagName: 'INTERNAL',
-                        NumberOfMessageSent: '5',
-                        PageNumber: '1'
-                    },
-                    {
-                        Day: '26.12.2023 00:00:00',
-                        TagName: 'IOS_DEVICE',
-                        NumberOfMessageSent: '5',
-                        PageNumber: '1'
-                    },
-                    {
-                        Day: '09.01.2024 00:00:00',
-                        TagName: 'INSTITUTION_SYMBOL:770875',
-                        NumberOfMessageSent: '6',
-                        PageNumber: '1'
-                    },
-                    {
-                        Day: '09.01.2024 00:00:00',
-                        TagName: 'INTERNAL',
-                        NumberOfMessageSent: '6',
-                        PageNumber: '1'
-                    },
-                    {
-                        Day: '09.01.2024 00:00:00',
-                        TagName: 'IOS_DEVICE',
-                        NumberOfMessageSent: '6',
-                        PageNumber: '1'
-                    },
-                    {
-                        Day: '10.01.2024 00:00:00',
-                        TagName: 'INSTITUTION_SYMBOL:770875',
-                        NumberOfMessageSent: '4',
-                        PageNumber: '1'
-                    },
-                    {
-                        Day: '10.01.2024 00:00:00',
-                        TagName: 'INTERNAL',
-                        NumberOfMessageSent: '4',
-                        PageNumber: '1'
-                    },
-                    {
-                        Day: '10.01.2024 00:00:00',
-                        TagName: 'IOS_DEVICE',
-                        NumberOfMessageSent: '4',
-                        PageNumber: '1'
-                    },
-                    {
-                        Day: '11.01.2024 00:00:00',
-                        TagName: 'INSTITUTION_SYMBOL:770875',
-                        NumberOfMessageSent: '12',
-                        PageNumber: '1'
-                    }
-                ],
-                pagesCount: 2,
-                totalCount: 18
-            }
+    async getReports(page, pageSize, reportId, searchString) {
+        if (AxiosFactory.debugMode) {
+            return Promise.resolve(reportListStub);
+        }
+
+        const body = {
+            apiKey: 'dbadec88-44bb-454b-b608-bddb4cd6ae6f',
+            pageNumber: page,
+            pageSize: pageSize,
+            reportId: reportId,
+            searchString: searchString,
         };
+
+        const result = await AxiosFactory.pnsApi
+            .post('/reports', body)
+            .then((response) => response)
+            .catch((error) => console.log(error));
+
+        return result.data;
     },
 
-    getMessageByTags(appId) {
-        return Promise.resolve(this.getData(appId));
+    async getReportTypes() {
+        if (AxiosFactory.debugMode) {
+            return Promise.resolve(reportTypesStub);
+        }
+        const body = {
+            apiKey: 'dbadec88-44bb-454b-b608-bddb4cd6ae6f'
+        };
+
+        const resulst = await AxiosFactory.pnsApi
+            .post('/reports/types', body)
+            .then((response) => response)
+            .catch((error) => console.log(error));
+
+        return resulst.data;
     }
 };

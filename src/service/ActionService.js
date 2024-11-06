@@ -1,23 +1,17 @@
-import axios from 'axios';
+import AxiosFactory from '@/service/AxiosFactory.js';
 import actionsListStub from '@/stubs/actions.json';
-
-const DEBUG_MODE = import.meta.env.VITE_DEBUG_MODE == 'true';
-
-const axiosBase = axios.create({
-    baseURL: import.meta.env.VITE_PNS_API_BASE_URL
-});
 
 export const ActionService = {
     async getActions() {
-        if (DEBUG_MODE) {
-            return actionsListStub;
+        if (AxiosFactory.debugMode) {
+            return Promise.resolve(actionsListStub);
         }
 
         const body = {
-            apiKey: "dbadec88-44bb-454b-b608-bddb4cd6ae6f",
-        }
+            apiKey: 'dbadec88-44bb-454b-b608-bddb4cd6ae6f'
+        };
 
-        const result = await axiosBase
+        const result = await AxiosFactory.pnsApi
             .post('/payload/actions', body)
             .then((response) => response)
             .catch((error) => console.log(error));
@@ -26,16 +20,16 @@ export const ActionService = {
     },
 
     async createAction(action) {
-        if (DEBUG_MODE) {
+        if (AxiosFactory.debugMode) {
             return;
         }
         const body = {
             action: action.actionName,
             description: action.description,
-            apiKey: "dbadec88-44bb-454b-b608-bddb4cd6ae6f",
-        }
+            apiKey: 'dbadec88-44bb-454b-b608-bddb4cd6ae6f'
+        };
 
-        const result = await axiosBase
+        const result = await AxiosFactory.pnsApi
             .post('/payload/actions/create', body)
             .then((response) => response)
             .catch((error) => console.log(error));
@@ -44,14 +38,14 @@ export const ActionService = {
     },
 
     async deleteAction(actionId) {
-        if (DEBUG_MODE) {
+        if (AxiosFactory.debugMode) {
             return;
         }
         const body = {
-            apiKey: 'dbadec88-44bb-454b-b608-bddb4cd6ae6f',
+            apiKey: 'dbadec88-44bb-454b-b608-bddb4cd6ae6f'
         };
 
-        const result = await axiosBase
+        const result = await AxiosFactory.pnsApi
             .delete(`/payload/actions/${actionId}`, { data: body })
             .then((response) => response)
             .catch((error) => console.log(error));

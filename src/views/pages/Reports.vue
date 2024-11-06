@@ -4,6 +4,7 @@ import { ReportService } from "@/service/ReportService";
 import { FilterMatchMode } from "@primevue/core/api";
 import { onBeforeMount, watch, ref } from "vue";
 import { useRoute } from "vue-router";
+import { format, parse } from "date-fns";
 
 const filters = ref(null);
 const loading = ref(false);
@@ -80,7 +81,7 @@ function initFilters() {
       <template #loading> Loading reports data. Please wait. </template>
       <Column field="Day" header="Day" style="min-width: 12rem" :sortable="true">
         <template #body="{ data }">
-          {{ data.Day }}
+          {{ format(parse(data.Day, "dd.MM.yyyy HH:mm:ss", new Date()), "dd.MM.yyyy") }}
         </template>
       </Column>
       <Column header="Tag Name" field="TagName" style="min-width: 12rem" :sortable="true">

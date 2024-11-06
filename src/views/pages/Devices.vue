@@ -2,9 +2,10 @@
 import { DeviceService } from "@/service/DeviceService";
 import { FilterMatchMode } from "@primevue/core/api";
 import { onBeforeMount, ref, watch } from "vue";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 
 const router = useRouter();
+const route = useRoute();
 
 const filters = ref(null);
 const isLoading = ref(false);
@@ -31,11 +32,14 @@ function deleteDevice(deviceAlias) {
 }
 
 function sendMessage(deviceAlias) {
-  router.push({
-    path: "/app/23/message",
-    state: {
-      alias: deviceAlias,
-    },
+  router.push({ 
+    name: 'message', 
+    params: { 
+      appId: route.params.appId 
+    }, 
+    state: { 
+      alias: deviceAlias 
+    } 
   });
 }
 

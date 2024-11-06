@@ -25,24 +25,24 @@ const model = ref([
           {
             label: "Send Message",
             icon: "pi pi-fw pi-directions",
-            to: "/app/23/message",
+            to: { name: 'message', params: { appId: route.params.appId } },
           },
           {
             label: "Message by Alias",
             icon: "pi pi-fw pi-book",
-            to: "/app/23/messagebyalias",
+            to: { name: 'messagebyalias', params: { appId: route.params.appId } },
           },
         ],
       },
       {
         label: "Devices",
         icon: "pi pi-fw pi-tablet",
-        to: "/app/23/devices",
+        to: { name: 'devices', params: { appId: route.params.appId } },
       },
       {
         label: "Actions",
         icon: "pi pi-fw pi-star",
-        to: "/app/23/actions",
+        to: { name: 'actions', params: { appId: route.params.appId } },
       },
       {
         label: "Reports",
@@ -58,7 +58,7 @@ onMounted(() => {
     reports.value = response.data.map(item => ({
       label: item.name,
       icon: "pi pi-fw pi-book",
-      to: { name: 'reports', params: { appId: 23, reportId: item.id } },
+      to: { name: 'reports', params: { appId: route.params.appId, reportId: item.id } },
     }));
   });
 })

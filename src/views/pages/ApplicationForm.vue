@@ -209,7 +209,7 @@ async function updateCredentials(appData, values) {
     }
 
     if (isNew) {
-        router.push({ name: 'application', params: { id: appData.id } });
+        router.push({ name: 'application', params: { appId: appData.id } });
     }
 
     setAppData(appData);

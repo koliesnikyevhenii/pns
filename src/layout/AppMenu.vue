@@ -1,11 +1,14 @@
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import AppMenuItem from "./AppMenuItem.vue";
+import { ReportService } from "@/service/ReportService";
 
 const route = useRoute();
 // Show menu only on specific routes
 const showMenu = computed(() => route.path.includes("/app/"));
+
+const reports = ref(null);
 
 const model = ref([
   {
@@ -44,17 +47,21 @@ const model = ref([
       {
         label: "Reports",
         icon: "pi pi-fw pi-folder",
-        items: [
-          {
-            label: "Messages by tags",
-            icon: "pi pi-fw pi-book",
-            to: "/app/23/reports",
-          },
-        ],
+        items: reports,
       },
     ],
   },
 ]);
+
+onMounted(() => {
+  ReportService.getReportTypes().then((response) => {
+    reports.value = response.data.map(item => ({
+      label: item.name,
+      icon: "pi pi-fw pi-book",
+      to: { name: 'reports', params: { appId: 23, reportId: item.id } },
+    }));
+  });
+})
 </script>
 
 <template>

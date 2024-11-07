@@ -4,7 +4,7 @@ import devicesListStub from '@/stubs/devices.json';
 export const DeviceService = {
     async getDevices(page, pageSize) {
         if (AxiosFactory.debugMode) {
-            return devicesListStub;
+            return Promise.resolve(devicesListStub);
         }
 
         const body = {

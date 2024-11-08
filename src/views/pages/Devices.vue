@@ -2,9 +2,10 @@
 import { DeviceService } from "@/service/DeviceService";
 import { FilterMatchMode } from "@primevue/core/api";
 import { onBeforeMount, ref, watch } from "vue";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 
 const router = useRouter();
+const route = useRoute();
 
 const filters = ref(null);
 const isLoading = ref(false);
@@ -17,7 +18,13 @@ const totalRecords = ref(0);
 
 function loadDevices() {
   isLoading.value = true;
-  DeviceService.getDevices(page.value, pageSize.value).then((response) => {
+  //currently we extract the entire collection without pagination, maybe this will be fixed latter
+  // DeviceService.getDevices(page.value, pageSize.value).then((response) => {
+  //   isLoading.value = false;
+  //   devices.value = response.data;
+  //   totalRecords.value = response.recordsTotal;
+  // });
+  DeviceService.getDevices().then((response) => {
     isLoading.value = false;
     devices.value = response.data;
     totalRecords.value = response.recordsTotal;
@@ -31,11 +38,14 @@ function deleteDevice(deviceAlias) {
 }
 
 function sendMessage(deviceAlias) {
-  router.push({
-    path: "/app/23/message",
-    state: {
-      alias: deviceAlias,
-    },
+  router.push({ 
+    name: 'message', 
+    params: { 
+      appId: route.params.appId 
+    }, 
+    state: { 
+      alias: deviceAlias 
+    } 
   });
 }
 
@@ -68,12 +78,16 @@ onBeforeMount(() => {
 <template>
   <div class="card">
     <div class="font-semibold text-xl mb-4">Devices</div>
+    <!-- to enable backend pagination need to add 
+      :lazy="true"
+      @update:rows="(event) => pageSize = event"
+      @page="(event) => page = event.page" 
+    -->
     <DataTable
       stripedRows
       sortable
       :value="devices"
       :paginator="true"
-      :lazy="true"
       :totalRecords="totalRecords"
       :rows="pageSize"
       dataKey="id"
@@ -85,8 +99,6 @@ onBeforeMount(() => {
       showGridlines
       :rowsPerPageOptions="[5, 10, 25]"
       currentPageReportTemplate="Showing {first} to {last} of {totalRecords} devices"
-      @update:rows="(event) => pageSize = event"
-      @page="(event) => page = event.page"
     >
       <template #header>
         <div class="flex justify-between">

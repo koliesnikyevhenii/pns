@@ -61,6 +61,54 @@
         "TagName": "INSTITUTION_SYMBOL:770875",
         "NumberOfMessageSent": "12",
         "PageNumber": "1"
+      },
+      {
+          "Day": "11.01.2024 00:00:00",
+          "Tag Name": "INTERNAL",
+          "Number Of Message Sent": "12",
+          "PageNumber": "1"
+      },
+      {
+          "Day": "11.01.2024 00:00:00",
+          "Tag Name": "IOS_DEVICE",
+          "Number Of Message Sent": "12",
+          "PageNumber": "1"
+      },
+      {
+          "Day": "16.01.2024 00:00:00",
+          "Tag Name": "INSTITUTION_SYMBOL:770875",
+          "Number Of Message Sent": "24",
+          "PageNumber": "1"
+      },
+      {
+          "Day": "16.01.2024 00:00:00",
+          "Tag Name": "INTERNAL",
+          "Number Of Message Sent": "24",
+          "PageNumber": "1"
+      },
+      {
+          "Day": "16.01.2024 00:00:00",
+          "Tag Name": "IOS_DEVICE",
+          "Number Of Message Sent": "24",
+          "PageNumber": "1"
+      },
+      {
+          "Day": "17.01.2024 00:00:00",
+          "Tag Name": "INSTITUTION_SYMBOL:770875",
+          "Number Of Message Sent": "1",
+          "PageNumber": "1"
+      },
+      {
+          "Day": "17.01.2024 00:00:00",
+          "Tag Name": "INTERNAL",
+          "Number Of Message Sent": "1",
+          "PageNumber": "1"
+      },
+      {
+          "Day": "17.01.2024 00:00:00",
+          "Tag Name": "IOS_DEVICE",
+          "Number Of Message Sent": "1",
+          "PageNumber": "1"
       }
     ],
     "pagesCount": 2,

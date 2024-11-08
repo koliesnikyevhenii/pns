@@ -16,25 +16,25 @@ const router = createRouter({
                     component: () => import('@/views/Dashboard.vue')
                 },
                 {
-                    path: '/app/:id/message',
+                    path: '/app/:appId/message',
                     name: 'message',
                     meta: { requiresAuth: true },
                     component: () => import('@/views/pages/SendMessage.vue')
                 },
                 {
-                    path: '/app/:id/messagebyalias',
+                    path: '/app/:appId/messagebyalias',
                     name: 'messagebyalias',
                     meta: { requiresAuth: true },
                     component: () => import('@/views/pages/MessageAlias.vue')
                 },
                 {
-                    path: '/app/:id/devices',
+                    path: '/app/:appId/devices',
                     name: 'devices',
                     meta: { requiresAuth: true },
                     component: () => import('@/views/pages/Devices.vue')
                 },
                 {
-                    path: '/app/:id/actions',
+                    path: '/app/:appId/actions',
                     name: 'actions',
                     meta: { requiresAuth: true },
                     component: () => import('@/views/pages/Actions.vue')
@@ -46,7 +46,7 @@ const router = createRouter({
                     component: () => import('@/views/pages/Reports.vue')
                 },
                 {
-                    path: '/app/:id/',
+                    path: '/app/:appId/',
                     name: 'application',
                     meta: { requiresAuth: true },
                     component: () => import('@/views/pages/ApplicationForm.vue')

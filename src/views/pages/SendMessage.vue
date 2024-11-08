@@ -22,7 +22,7 @@ const action = computed(() => {
 
 onBeforeMount(() => {
   if (router.options?.history?.state?.alias) {
-    sendMode.value = "2";
+    sendMode.value = SendMode.ALIAS;
     payload.value = router.options.history.state.alias;
   }
 

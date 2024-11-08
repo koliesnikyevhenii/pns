@@ -19,9 +19,10 @@ function getSeverity(status) {
   return "info";
 }
 
-watch([page, pageSize, searchString], () => {
-  loadReports();
-})
+//searching and pagination currently work on the frontend
+// watch([page, pageSize, searchString], () => {
+//   loadReports();
+// })
 
 onBeforeMount(() => {
   loadReports();
@@ -47,12 +48,16 @@ function initFilters() {
 <template>
   <div class="card">
     <div class="font-semibold text-xl mb-4">Report Message by Tags</div>
+    <!-- to enable backend pagination need to add 
+      :lazy="true"
+      @update:rows="(event) => pageSize = event"
+      @page="(event) => page = event.page" 
+    -->
     <DataTable
       stripedRows
       sortable
       :value="reportItems"
       :paginator="true"
-      :lazy="true"
       :totalRecords="totalRecords"
       :rows="pageSize"
       dataKey="id"
@@ -64,8 +69,6 @@ function initFilters() {
       showGridlines
       :rowsPerPageOptions="[5, 10, 25]"
       currentPageReportTemplate="Showing {first} to {last} of {totalRecords} reports"
-      @update:rows="(event) => pageSize = event"
-      @page="(event) => page = ++event.page"
     >
       <template #header>
         <div class="flex justify-between">
@@ -73,7 +76,7 @@ function initFilters() {
             <InputIcon>
               <i class="pi pi-search" />
             </InputIcon>
-            <InputText v-model="searchString" placeholder="Keyword Search" />
+            <InputText v-model="filters['global'].value" placeholder="Keyword Search" />
           </IconField>
         </div>
       </template>

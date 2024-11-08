@@ -76,7 +76,7 @@ function initCharts() {
 }
 
 function editApp(appId) {
-    router.push({ name: 'application', params: { id: appId } });
+    router.push({ name: 'application', params: { appId: appId } });
 }
 
 function deleteApplication(app) {
@@ -100,7 +100,7 @@ function newApp() {
 }
 
 function appMessages(appId) {
-    router.push({ name: 'messagebyalias', params: { id: appId } });
+    router.push({ name: 'messagebyalias', params: { appId: appId } });
 }
 
 onMounted(async () => {

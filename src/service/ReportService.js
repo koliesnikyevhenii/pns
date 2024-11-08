@@ -4,9 +4,9 @@ import reportTypesStub from '@/stubs/reportTypes.json';
 
 export const ReportService = {
     async getReports(page, pageSize, reportId, searchString) {
-        // if (AxiosFactory.debugMode) {
-        //     return Promise.resolve(reportListStub);
-        // }
+        if (AxiosFactory.debugMode) {
+            return Promise.resolve(reportListStub);
+        }
 
         const body = {
             apiKey: 'dbadec88-44bb-454b-b608-bddb4cd6ae6f',

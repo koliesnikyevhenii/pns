@@ -16,7 +16,7 @@ const route = useRoute();
 const router = useRouter();
 const toast = useToast();
 
-const isNew = route.params.id == null;
+const isNew = route.params.appId == null;
 
 const credentialsAndroid = ref(null);
 const credentialsIOS = ref(null);
@@ -81,7 +81,7 @@ const submitForm = handleSubmit((values) => {
             }
         });
     } else {
-        ApplicationService.editApp(route.params.id, appRequest).then((response) => {
+        ApplicationService.editApp(route.params.appId, appRequest).then((response) => {
             if (response.data?.id) {
                 toast.add({
                     severity: 'info',
@@ -217,7 +217,7 @@ async function updateCredentials(appData, values) {
 
 onMounted(async () => {
     if (!isNew) {
-        var appResponse = await ApplicationService.getApplication(route.params.id);
+        var appResponse = await ApplicationService.getApplication(route.params.appId);
         if (appResponse?.data) {
             setAppData(appResponse.data);
         }
@@ -244,7 +244,7 @@ const [serviceAccountFileName] = defineField('serviceAccountFileName');
             <div class="md:w-1/2">
                 <div class="card flex flex-col gap-4">
                     <div class="font-semibold text-xl">
-                        {{ isNew ? 'New Application' : 'Edit Application ' + $route.params.id }}
+                        {{ isNew ? 'New Application' : 'Edit Application ' + $route.params.appId }}
                     </div>
                     <div class="flex flex-col gap-2">
                         <label v-if="!isNew" for="applicationName">Application Name</label>

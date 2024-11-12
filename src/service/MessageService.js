@@ -1,21 +1,72 @@
+import { ScheduleMode, SendMode } from '@/constants/enums';
+import AxiosFactory from '@/service/AxiosFactory.js';
+import messagesListStub from '@/stubs/messages.json';
+
 export const MessageService = {
-    getData(appId) {
-        return {
-            code: 0,
-            data: [
-                {
-                    id: 12,
-                    alias: 'RegisterExams',
-                    lastMsg: 'Deep link to register exams tab in exams screen',
-                    lastMsgStatus: 'Sent',
-                    lastMsgDate: '26.12.2023',
-                    msgCount: '12'
-                }
-            ]
+    async getMessages(appId) {
+        if (AxiosFactory.debugMode) {
+            return Promise.resolve(messagesListStub);
+        }
+
+        const body = {
+            page: 0,
+            pagesize: 100000,
+            apiKey: 'dbadec88-44bb-454b-b608-bddb4cd6ae6f'
         };
+
+        const result = await AxiosFactory.pnsApi
+            .post('/messages/paging', body)
+            .then((response) => response)
+            .catch((error) => console.log(error));
+
+        return result.data;
     },
 
-    getMessages(appId) {
-        return Promise.resolve(this.getData(appId));
-    }
+    async SendMessage(messageData) {
+        if (AxiosFactory.debugMode) {
+            return Promise.resolve();
+        }
+        const { messageText, messagePayload, messageHeader, scheduleMode, messageSendDate, sendMode, messageTags, messageAliases } = messageData;
+
+        const body = {
+            apiKey: 'dbadec88-44bb-454b-b608-bddb4cd6ae6f',
+            message: {
+                text: messageText,
+                payload: this.parsePayload(messagePayload),
+                ...(messageHeader && { header: messageHeader })
+            },
+            ...(scheduleMode === ScheduleMode.SCHEDULED && { schedual: { date: this.formatDate(messageSendDate) } }),
+            ...this.buildCriteria(sendMode, messageTags, messageAliases)
+        };
+
+        const result = await AxiosFactory.pnsApi
+            .post('/messages/send', body)
+            .then((response) => response)
+            .catch((error) => console.log(error));
+
+        return result.data;
+    },
+    parsePayload(payload) {
+        try {
+            return JSON.parse(payload);
+        } catch (error) {
+            console.error('Invalid JSON in message payload:', error);
+            return {};
+        }
+    },
+    formatDate(date) {
+        const datePart = date.toLocaleDateString('en-CA');
+        const timePart = date.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+        return `${datePart} ${timePart}`;
+    },
+    buildCriteria(sendMode, tags, aliases) {
+        switch (sendMode) {
+            case SendMode.TAG:
+                return { criteria: { tag: tags } };
+            case SendMode.ALIAS:
+                return { criteria: { alias: aliases.split(/[, ]+/) } };
+            default:
+                return {};
+        }
+    },
 };

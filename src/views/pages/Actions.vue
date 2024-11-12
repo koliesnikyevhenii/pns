@@ -70,7 +70,7 @@ function resetForm() {
 
 function loadActions() {
   loading.value = true;
-  ActionService.getActions(route.params.id).then((response) => {
+  ActionService.getActions(route.params.appId).then((response) => {
     loading.value = false;
     actionItems.value = response.data;
   });

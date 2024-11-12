@@ -3,9 +3,9 @@ import actionsListStub from '@/stubs/actions.json';
 
 export const ActionService = {
     async getActions() {
-        if (AxiosFactory.debugMode) {
-            return Promise.resolve(actionsListStub);
-        }
+        // if (AxiosFactory.debugMode) {
+        //     return Promise.resolve(actionsListStub);
+        // }
 
         const body = {
             apiKey: 'dbadec88-44bb-454b-b608-bddb4cd6ae6f'

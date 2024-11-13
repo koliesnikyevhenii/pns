@@ -1,6 +1,7 @@
 import { ScheduleMode, SendMode } from '@/constants/enums';
 import AxiosFactory from '@/service/AxiosFactory.js';
 import messagesListStub from '@/stubs/messages.json';
+import messageListByAlias from '@/stubs/messageByAlias.json'
 
 export const MessageService = {
     async getMessages(appId) {
@@ -16,6 +17,25 @@ export const MessageService = {
 
         const result = await AxiosFactory.pnsApi
             .post('/messages/paging', body)
+            .then((response) => response)
+            .catch((error) => console.log(error));
+
+        return result.data;
+    },
+
+    async getMessagesByAlias(deviceAlias) {
+        if (AxiosFactory.debugMode) {
+            return Promise.resolve(messageListByAlias);
+        }
+
+        const body = {
+            apiKey: 'dbadec88-44bb-454b-b608-bddb4cd6ae6f'
+        };
+
+        const result = await AxiosFactory.pnsApi
+            .post('/messages/alias', body, {
+                params: { alias: deviceAlias }
+            })
             .then((response) => response)
             .catch((error) => console.log(error));
 
@@ -68,5 +88,5 @@ export const MessageService = {
             default:
                 return {};
         }
-    },
+    }
 };

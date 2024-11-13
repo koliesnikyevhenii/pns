@@ -22,10 +22,16 @@ const router = createRouter({
                     component: () => import('@/views/pages/SendMessage.vue')
                 },
                 {
-                    path: '/app/:appId/messagebyalias',
+                    path: '/app/:appId/messages',
                     name: 'messagebyalias',
                     meta: { requiresAuth: true },
                     component: () => import('@/views/pages/MessageAlias.vue')
+                },
+                {
+                    path: '/app/:appId/messages/list/:alias',
+                    name: 'messageList',
+                    meta: { requiresAuth: true },
+                    component: () => import('@/views/pages/MessageList.vue')
                 },
                 {
                     path: '/app/:appId/devices',

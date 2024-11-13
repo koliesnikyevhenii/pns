@@ -1,0 +1,75 @@
+{
+    "code": 0,
+    "data": [
+        {
+            "id": "5f921280-8647-4898-92da-353bef1cd3ad",
+            "header": "",
+            "text": "message",
+            "appId": 28,
+            "deviceId": 18411,
+            "status": 3,
+            "sendErrorDesc": null,
+            "messageDate_Unix": 1731426901583
+        },
+        {
+            "id": "bc8b9810-5cba-4923-b1ce-96bc3218c278",
+            "header": "",
+            "text": "test",
+            "appId": 28,
+            "deviceId": 18411,
+            "status": 3,
+            "sendErrorDesc": null,
+            "messageDate_Unix": 1731423477023
+        },
+        {
+            "id": "bd38e730-1d48-4ba6-8bf9-9a510dc2c844",
+            "header": "",
+            "text": "test",
+            "appId": 28,
+            "deviceId": 18411,
+            "status": 3,
+            "sendErrorDesc": null,
+            "messageDate_Unix": 1731422373267
+        },
+        {
+            "id": "38b10d91-42f9-4730-b2ea-ac3b4e083c7d",
+            "header": "",
+            "text": "test",
+            "appId": 28,
+            "deviceId": 18411,
+            "status": 3,
+            "sendErrorDesc": null,
+            "messageDate_Unix": 1731422350327
+        },
+        {
+            "id": "0a88d95e-f0c9-4a76-9b78-540f66dfa2b2",
+            "header": "",
+            "text": "Test",
+            "appId": 28,
+            "deviceId": 18411,
+            "status": 3,
+            "sendErrorDesc": null,
+            "messageDate_Unix": 1731421783043
+        },
+        {
+            "id": "ccb021c1-c39a-4a6b-b1af-01081456f08b",
+            "header": "Message Title",
+            "text": "Message text",
+            "appId": 28,
+            "deviceId": 18411,
+            "status": 3,
+            "sendErrorDesc": null,
+            "messageDate_Unix": 1731406642960
+        },
+        {
+            "id": "08d8fe80-87ce-44f8-be41-ec8c03786e20",
+            "header": "Test Message Header",
+            "text": "Test message text",
+            "appId": 28,
+            "deviceId": 18411,
+            "status": 3,
+            "sendErrorDesc": null,
+            "messageDate_Unix": 1731342648233
+        }
+    ]
+}

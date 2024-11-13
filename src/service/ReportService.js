@@ -1,6 +1,7 @@
 import AxiosFactory from '@/service/AxiosFactory.js';
 import reportListStub from '@/stubs/report.json';
 import reportTypesStub from '@/stubs/reportTypes.json';
+import store from '@/store/index.js';
 
 export const ReportService = {
     async getReports(page, pageSize, reportId, searchString) {
@@ -9,7 +10,7 @@ export const ReportService = {
         }
 
         const body = {
-            apiKey: 'dbadec88-44bb-454b-b608-bddb4cd6ae6f',
+            apiKey: store.getters.apiKey,
             //Searching and sorting are not implemented on the backend,
             //so we retrieve the entire collection and perform sorting on the frontend.
             pageNumber: 1,
@@ -31,7 +32,7 @@ export const ReportService = {
             return Promise.resolve(reportTypesStub);
         }
         const body = {
-            apiKey: 'dbadec88-44bb-454b-b608-bddb4cd6ae6f'
+            apiKey: store.getters.apiKey,
         };
 
         const resulst = await AxiosFactory.pnsApi

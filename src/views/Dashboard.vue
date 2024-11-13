@@ -2,8 +2,11 @@
 import { useLayout } from '@/layout/composables/layout';
 import { onMounted, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
+import { useStore } from "vuex";
 import { ApplicationService } from '@/service/ApplicationService';
 import 'chartjs-adapter-date-fns';
+
+const store = useStore();
 
 const appList = ref([]);
 const chartOptions = ref(null);
@@ -75,7 +78,8 @@ function initCharts() {
     }
 }
 
-function editApp(appId) {
+function editApp(appId, apiKey) {
+    store.dispatch('setApiKey', apiKey)
     router.push({ name: 'application', params: { appId: appId } });
 }
 
@@ -99,7 +103,8 @@ function newApp() {
     router.push({ name: 'newapp' });
 }
 
-function appMessages(appId) {
+function appMessages(appId, apiKey) {
+    store.dispatch('setApiKey', apiKey)
     router.push({ name: 'messagebyalias', params: { appId: appId } });
 }
 
@@ -115,7 +120,7 @@ onMounted(async () => {
 <template>
     <div class="grid grid-cols-12 gap-8">
         <div v-for="(app, index) in appList" :key="app.id" class="col-span-12 xl:col-span-6">
-            <div class="card cursor-pointer" @click="appMessages(app.id)">
+            <div class="card cursor-pointer" @click="appMessages(app.id, app.apiKey)">
                 <Chart v-if="chartData[index]" type="line" :data="chartData[index]" :options="chartOptions" class="h-100" />
                 <div v-else class="m-auto w-10" role="status">
                     <svg aria-hidden="true" class="w-10 h-10 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none">
@@ -133,7 +138,7 @@ onMounted(async () => {
                 <div class="font-semibold text-xl mt-4 mb-4">{{ app.name }}</div>
                 <div class="mb-4">{{ app.description }}</div>
                 <div class="mb-4">{{ app.apiKey }}</div>
-                <Button icon="pi pi-file-edit" outlined rounded class="mr-2" @click="editApp(app.id)" v-on:click.stop />
+                <Button icon="pi pi-file-edit" outlined rounded class="mr-2" @click="editApp(app.id, app.apiKey)" v-on:click.stop />
                 <Button icon="pi pi-trash" outlined rounded severity="danger" @click="deleteApplication(app)" v-on:click.stop />
             </div>
         </div>

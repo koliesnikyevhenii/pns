@@ -1,5 +1,6 @@
 import AxiosFactory from '@/service/AxiosFactory.js';
 import actionsListStub from '@/stubs/actions.json';
+import store from '@/store/index.js';
 
 export const ActionService = {
     async getActions() {
@@ -8,7 +9,7 @@ export const ActionService = {
         }
 
         const body = {
-            apiKey: 'dbadec88-44bb-454b-b608-bddb4cd6ae6f'
+            apiKey: store.getters.apiKey
         };
 
         const result = await AxiosFactory.pnsApi
@@ -26,7 +27,7 @@ export const ActionService = {
         const body = {
             action: action.actionName,
             description: action.description,
-            apiKey: 'dbadec88-44bb-454b-b608-bddb4cd6ae6f'
+            apiKey: store.getters.apiKey
         };
 
         const result = await AxiosFactory.pnsApi
@@ -42,7 +43,7 @@ export const ActionService = {
             return;
         }
         const body = {
-            apiKey: 'dbadec88-44bb-454b-b608-bddb4cd6ae6f'
+            apiKey: store.getters.apiKey
         };
 
         const result = await AxiosFactory.pnsApi

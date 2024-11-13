@@ -3,7 +3,8 @@ import { createStore } from 'vuex';
 
 export default createStore({
     state: {
-        authToken: localStorage.getItem('authToken') || null
+        authToken: localStorage.getItem('authToken') || null,
+        apiKey: null
     },
     mutations: {
         setAuthToken(state, token) {
@@ -13,6 +14,9 @@ export default createStore({
         clearAuthToken(state) {
             state.authToken = null;
             localStorage.removeItem('authToken');
+        },
+        setApiKey(state, apiKey) {
+            state.apiKey = apiKey;
         }
     },
     actions: {
@@ -21,9 +25,13 @@ export default createStore({
         },
         logout({ commit }) {
             commit('clearAuthToken');
+        },
+        setApiKey({ commit }, apiKey) {
+            commit('setApiKey', apiKey);
         }
     },
     getters: {
-        isAuthenticated: (state) => !!state.authToken
+        isAuthenticated: (state) => !!state.authToken,
+        apiKey: (state) => state.apiKey,
     }
 });

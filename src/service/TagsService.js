@@ -1,5 +1,6 @@
 import AxiosFactory from '@/service/AxiosFactory.js';
 import tagsListStub from '@/stubs/tag.json';
+import store from '@/store/index.js';
 
 export const TagService = {
     async getTags() {
@@ -8,7 +9,7 @@ export const TagService = {
         };
 
         const body = {
-            apiKey: 'dbadec88-44bb-454b-b608-bddb4cd6ae6f'
+            apiKey: store.getters.apiKey
         };
 
         const result = await AxiosFactory.pnsApi

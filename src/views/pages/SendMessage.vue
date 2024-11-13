@@ -253,12 +253,12 @@ onBeforeMount(() => {
                   v-model="messageTags"
                   v-bind="messageTagsAttr"
                   :suggestions="filteredTags"
-                  @complete="searchTags"
                   placeholder="Add a tag"
                   multiple
                   fluid
                   @option-select="selectTagFromDropdown"
                   @option-unselect="unselectTag"
+                  @complete="searchTags"
                   @keydown.enter.prevent
                   class="w-full"
                 >

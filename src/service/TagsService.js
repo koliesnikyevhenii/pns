@@ -3,9 +3,9 @@ import tagsListStub from '@/stubs/tag.json';
 
 export const TagService = {
     async getTags() {
-        // if (AxiosFactory.debugMode) {
-        //     return Promise.resolve(tagsListStub);
-        // };
+        if (AxiosFactory.debugMode) {
+            return Promise.resolve(tagsListStub);
+        };
 
         const body = {
             apiKey: 'dbadec88-44bb-454b-b608-bddb4cd6ae6f'

@@ -1,0 +1,15 @@
+{
+    "recordsTotal": 1,
+    "recordsFiltered": 1,
+    "code": 0,
+    "data": [
+        {
+            "alias": "100100100",
+            "numMessages": 1,
+            "lastMessageText": "Test message text",
+            "lastMessageDate": "2024-11-11T16:30:48.233",
+            "lastMessageStatus": 3,
+            "lastMessageDate_Unix": 1731342648233
+        }
+    ]
+}

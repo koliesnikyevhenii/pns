@@ -10,7 +10,7 @@ const messageItems = ref(null);
 const route = useRoute();
 
 onBeforeMount(() => {
-  MessageService.getMessages(route.params.id).then((response) => {
+  MessageService.getMessages(route.params.appId).then((response) => {
     loading.value = false;
     messageItems.value = response.data;
   });
@@ -74,7 +74,7 @@ function initFilters() {
         :sortable="true"
       >
         <template #body="{ data }">
-          {{ data.msgCount }}
+          {{ data.numMessages }}
         </template>
       </Column>
       <Column
@@ -84,7 +84,7 @@ function initFilters() {
         :sortable="true"
       >
         <template #body="{ data }">
-          {{ data.lastMsg }}
+          {{ data.lastMessageText }}
         </template>
       </Column>
       <Column
@@ -94,7 +94,7 @@ function initFilters() {
         :sortable="true"
       >
         <template #body="{ data }">
-          {{ data.lastMsgStatus }}
+          {{ data.lastMessageStatus }}
         </template>
       </Column>
       <Column
@@ -104,7 +104,7 @@ function initFilters() {
         :sortable="true"
       >
         <template #body="{ data }">
-          {{ data.lastMsgDate }}
+          {{ data.lastMessageDate }}
         </template>
       </Column>
     </DataTable>

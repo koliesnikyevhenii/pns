@@ -1,5 +1,6 @@
 import AxiosFactory from '@/service/AxiosFactory.js';
 import devicesListStub from '@/stubs/devices.json';
+import store from '@/store/index.js';
 
 export const DeviceService = {
     //Searching and sorting are not implemented on the backend, 
@@ -30,7 +31,7 @@ export const DeviceService = {
         }
 
         const body = {
-            apiKey: 'dbadec88-44bb-454b-b608-bddb4cd6ae6f',
+            apiKey: store.getters.apiKey
         };
 
         const result = await AxiosFactory.pnsApi
@@ -50,7 +51,7 @@ export const DeviceService = {
 
         const body = {
             alias: deviceAlias,
-            apiKey: 'dbadec88-44bb-454b-b608-bddb4cd6ae6f'
+            apiKey: store.getters.apiKey
         };
 
         const result = await AxiosFactory.pnsApi
@@ -69,7 +70,7 @@ export const DeviceService = {
 
         const body = {
             alias: device.alias,
-            apiKey: 'dbadec88-44bb-454b-b608-bddb4cd6ae6f'
+            apiKey: store.getters.apiKey
         };
 
         const result = await AxiosFactory.pnsApi

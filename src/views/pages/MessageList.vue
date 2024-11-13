@@ -3,6 +3,7 @@ import { MessageService } from "@/service/MessageService";
 import { onBeforeMount, ref } from "vue";
 import { useRoute } from "vue-router";
 import { format } from "date-fns";
+import { MessageStatuses } from "@/constants/enums";
 
 const alias = ref('');
 const loading = ref(null);
@@ -69,7 +70,7 @@ onBeforeMount(() => {
         :sortable="true"
       >
         <template #body="{ data }">
-          {{ data.status }}
+          {{ MessageStatuses[data.status] }}
         </template>
       </Column>
       <Column

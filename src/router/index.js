@@ -1,6 +1,9 @@
 import AppLayout from '@/layout/AppLayout.vue';
 import { createRouter, createWebHistory } from 'vue-router';
 import store from '@/store';
+import { useLayout } from '@/layout/composables/layout';
+
+const { showMenu, hideMenu } = useLayout();
 
 const router = createRouter({
     history: createWebHistory(),
@@ -80,11 +83,22 @@ const router = createRouter({
 
 // Global navigation guard
 router.beforeEach((to, from, next) => {
+    if (to.name === 'dashboard') {
+        hideMenu();
+    } else if (from.name !== 'dashboard') {
+        showMenu();
+    }
     if (to.meta.requiresAuth && !store.getters.isAuthenticated) {
         // Redirect to login if not authenticated
         next('auth/login');
     } else {
         next(); // Continue to the route
+    }
+});
+
+router.afterEach((to, from) => {
+    if (from.name === 'dashboard' && to.name !== 'dashboard') {
+        showMenu();
     }
 });
 

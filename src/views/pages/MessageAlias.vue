@@ -4,6 +4,7 @@ import { FilterMatchMode } from "@primevue/core/api";
 import { onBeforeMount, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { format } from "date-fns";
+import { MessageStatuses } from "@/constants/enums";
 
 const filters = ref(null);
 const loading = ref(false);
@@ -111,7 +112,7 @@ function initFilters() {
         :sortable="true"
       >
         <template #body="{ data }">
-          {{ data.lastMessageStatus }}
+          {{ MessageStatuses[data.lastMessageStatus] }}
         </template>
       </Column>
       <Column

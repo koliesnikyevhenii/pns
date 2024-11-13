@@ -54,6 +54,30 @@ export function useLayout() {
         document.documentElement.classList.toggle('app-dark');
     };
 
+    const showMenu = () => {
+        if (layoutConfig.menuMode === 'overlay') {
+            layoutState.overlayMenuActive = true;
+        }
+
+        if (window.innerWidth > 991) {
+            layoutState.staticMenuDesktopInactive = false;
+        } else {
+            layoutState.staticMenuMobileActive = true;
+        }
+    };
+
+    const hideMenu = () => {
+        if (layoutConfig.menuMode === 'overlay') {
+            layoutState.overlayMenuActive = false;
+        }
+
+        if (window.innerWidth > 991) {
+            layoutState.staticMenuDesktopInactive = true;
+        } else {
+            layoutState.staticMenuMobileActive = false;
+        }
+    };
+
     const onMenuToggle = () => {
         if (layoutConfig.menuMode === 'overlay') {
             layoutState.overlayMenuActive = !layoutState.overlayMenuActive;
@@ -80,5 +104,5 @@ export function useLayout() {
 
     const getSurface = computed(() => layoutConfig.surface);
 
-    return { layoutConfig: readonly(layoutConfig), layoutState: readonly(layoutState), onMenuToggle, isSidebarActive, isDarkTheme, getPrimary, getSurface, setActiveMenuItem, toggleDarkMode, setPrimary, setSurface, setPreset, resetMenu, setMenuMode };
+    return { layoutConfig: readonly(layoutConfig), layoutState: readonly(layoutState), showMenu, hideMenu, onMenuToggle, isSidebarActive, isDarkTheme, getPrimary, getSurface, setActiveMenuItem, toggleDarkMode, setPrimary, setSurface, setPreset, resetMenu, setMenuMode };
 }

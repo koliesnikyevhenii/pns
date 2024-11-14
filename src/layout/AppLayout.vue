@@ -4,6 +4,10 @@ import { computed, ref, watch } from 'vue';
 import AppFooter from './AppFooter.vue';
 import AppSidebar from './AppSidebar.vue';
 import AppTopbar from './AppTopbar.vue';
+import { useRoute } from "vue-router";
+
+const route = useRoute();
+const isAppSelected = ref(false);
 
 const { layoutConfig, layoutState, isSidebarActive, resetMenu } = useLayout();
 
@@ -16,6 +20,10 @@ watch(isSidebarActive, (newVal) => {
         unbindOutsideClickListener();
     }
 });
+
+watch(() => route.params.appId, (newAppId) => {
+    isAppSelected.value = newAppId !== undefined;
+}, { immediate: true });
 
 const containerClass = computed(() => {
     return {
@@ -56,7 +64,7 @@ function isOutsideClicked(event) {
 <template>
     <div class="layout-wrapper" :class="containerClass">
         <app-topbar></app-topbar>
-        <app-sidebar></app-sidebar>
+        <app-sidebar v-if="isAppSelected"></app-sidebar>
         <div class="layout-main-container">
             <div class="layout-main">
                 <router-view></router-view>

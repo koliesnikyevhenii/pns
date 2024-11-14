@@ -1,6 +1,6 @@
 import AxiosFactory from '@/service/AxiosFactory.js';
 import devicesListStub from '@/stubs/devices.json';
-import store from '@/store/index.js';
+import { getApiKey } from '@/helpers/helpers';
 
 export const DeviceService = {
     //Searching and sorting are not implemented on the backend, 
@@ -25,13 +25,13 @@ export const DeviceService = {
 
     //     return result.data;
     // },
-    async getDevices() {
+    async getDevices(appId) {
         if (AxiosFactory.debugMode) {
             return Promise.resolve(devicesListStub);
         }
 
         const body = {
-            apiKey: store.getters.apiKey
+            apiKey: await getApiKey(appId)
         };
 
         const result = await AxiosFactory.pnsApi
@@ -44,14 +44,14 @@ export const DeviceService = {
         return result.data;
     },
 
-    async deleteDevice(deviceAlias) {
+    async deleteDevice(appId, deviceAlias) {
         if (AxiosFactory.debugMode) {
             return;
         }
 
         const body = {
             alias: deviceAlias,
-            apiKey: store.getters.apiKey
+            apiKey: await getApiKey(appId)
         };
 
         const result = await AxiosFactory.pnsApi
@@ -61,7 +61,7 @@ export const DeviceService = {
         return result.data;
     },
 
-    async changeDeviceStatus(device) {
+    async changeDeviceStatus(appId, device) {
         if (AxiosFactory.debugMode) {
             return;
         }
@@ -70,7 +70,7 @@ export const DeviceService = {
 
         const body = {
             alias: device.alias,
-            apiKey: store.getters.apiKey
+            apiKey: await getApiKey(appId)
         };
 
         const result = await AxiosFactory.pnsApi

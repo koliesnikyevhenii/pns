@@ -16,7 +16,7 @@ const logoutUser = () => {
   router.push("/auth/login"); // Redirect to login page
 };
 
-const showMenu = computed(() => route.name !== 'dashboard');
+const showMenu = computed(() => route.params.appId !== undefined);
 </script>
 
 <template>

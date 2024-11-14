@@ -31,7 +31,7 @@ onBeforeMount(() => {
 
 function loadReports() {
   loading.value = true;
-  ReportService.getReports(page.value, pageSize.value, route.params.reportId, searchString.value).then((response) => {
+  ReportService.getReports(route.params.appId, page.value, pageSize.value, route.params.reportId, searchString.value).then((response) => {
     loading.value = false;
     reportItems.value = response.data.results.map(removeSpacesFromObjectKeys);
     totalRecords.value = response.data.totalCount;

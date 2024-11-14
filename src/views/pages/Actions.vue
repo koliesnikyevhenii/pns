@@ -31,7 +31,7 @@ const { defineField, handleSubmit, handleReset, errors } = useForm({
 });
 
 const submitForm = handleSubmit((values) => {
-  ActionService.createAction(values).then(() => {
+  ActionService.createAction(route.params.appId, values).then(() => {
     toast.add({
       severity: "info",
       summary: "Success",
@@ -57,7 +57,7 @@ function showActionDialog() {
 }
 
 function deleteAction() {
-  ActionService.deleteAction(action.value.id).then(() => {
+  ActionService.deleteAction(route.params.appId, action.value.id).then(() => {
     deleteActionDialog.value = false;
     loadActions();
   });

@@ -1,15 +1,15 @@
 import AxiosFactory from '@/service/AxiosFactory.js';
 import actionsListStub from '@/stubs/actions.json';
-import store from '@/store/index.js';
+import { getApiKey } from '@/helpers/helpers';
 
 export const ActionService = {
-    async getActions() {
+    async getActions(appId) {
         if (AxiosFactory.debugMode) {
             return Promise.resolve(actionsListStub);
         }
 
         const body = {
-            apiKey: store.getters.apiKey
+            apiKey: await getApiKey(appId)
         };
 
         const result = await AxiosFactory.pnsApi
@@ -20,14 +20,14 @@ export const ActionService = {
         return result.data;
     },
 
-    async createAction(action) {
+    async createAction(appId, action) {
         if (AxiosFactory.debugMode) {
             return;
         }
         const body = {
             action: action.actionName,
             description: action.description,
-            apiKey: store.getters.apiKey
+            apiKey: await getApiKey(appId)
         };
 
         const result = await AxiosFactory.pnsApi
@@ -38,12 +38,12 @@ export const ActionService = {
         return result.data;
     },
 
-    async deleteAction(actionId) {
+    async deleteAction(appId, actionId) {
         if (AxiosFactory.debugMode) {
             return;
         }
         const body = {
-            apiKey: store.getters.apiKey
+            apiKey: await getApiKey(appId)
         };
 
         const result = await AxiosFactory.pnsApi

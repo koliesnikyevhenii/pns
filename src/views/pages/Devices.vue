@@ -24,7 +24,7 @@ function loadDevices() {
   //   devices.value = response.data;
   //   totalRecords.value = response.recordsTotal;
   // });
-  DeviceService.getDevices().then((response) => {
+  DeviceService.getDevices(route.params.appId).then((response) => {
     isLoading.value = false;
     devices.value = response.data;
     totalRecords.value = response.recordsTotal;
@@ -32,7 +32,7 @@ function loadDevices() {
 }
 
 function deleteDevice(deviceAlias) {
-  DeviceService.deleteDevice(deviceAlias).then((response) => {
+  DeviceService.deleteDevice(route.params.appId, deviceAlias).then((response) => {
     deleteDeviceDialog.value = false;
   });
 }
@@ -51,7 +51,7 @@ function sendMessage(deviceAlias) {
 
 function toggleDeviceStatus(device) {
   device.status = !device.status;
-  DeviceService.changeDeviceStatus(device);
+  DeviceService.changeDeviceStatus(route.params.appId, device);
 }
 
 function initFilters() {

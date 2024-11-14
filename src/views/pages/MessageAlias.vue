@@ -25,7 +25,7 @@ function onRowSelect() {
 
 onBeforeMount(() => {
   loading.value = true;
-  MessageService.getMessages().then((response) => {
+  MessageService.getMessages(route.params.appId).then((response) => {
     loading.value = false;
     messageItems.value = response.data;
   });

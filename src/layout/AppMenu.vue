@@ -54,7 +54,7 @@ const model = ref([
 ]);
 
 onMounted(() => {
-  ReportService.getReportTypes().then((response) => {
+  ReportService.getReportTypes(route.params.appId).then((response) => {
     reports.value = response.data.map(item => ({
       label: item.name,
       icon: "pi pi-fw pi-book",

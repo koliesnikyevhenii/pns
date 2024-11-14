@@ -2,11 +2,11 @@ import { ScheduleMode, SendMode } from '@/constants/enums';
 import AxiosFactory from '@/service/AxiosFactory.js';
 import messagesListStub from '@/stubs/messages.json';
 import messageListByAlias from '@/stubs/messageByAlias.json';
-import store from "@/store/index.js";
+import { getApiKey } from '@/helpers/helpers';
 
 
 export const MessageService = {
-    async getMessages() {
+    async getMessages(appId) {
         if (AxiosFactory.debugMode) {
             return Promise.resolve(messagesListStub);
         }
@@ -14,7 +14,7 @@ export const MessageService = {
         const body = {
             page: 0,
             pagesize: 100000,
-            apiKey: store.getters.apiKey
+            apiKey: await getApiKey(appId)
         };
 
         const result = await AxiosFactory.pnsApi
@@ -25,13 +25,13 @@ export const MessageService = {
         return result.data;
     },
 
-    async getMessagesByAlias(deviceAlias) {
+    async getMessagesByAlias(appId, deviceAlias) {
         if (AxiosFactory.debugMode) {
             return Promise.resolve(messageListByAlias);
         }
 
         const body = {
-            apiKey: store.getters.apiKey
+            apiKey: await getApiKey(appId)
         };
 
         const result = await AxiosFactory.pnsApi
@@ -44,14 +44,14 @@ export const MessageService = {
         return result.data;
     },
 
-    async SendMessage(messageData) {
+    async SendMessage(appId, messageData) {
         if (AxiosFactory.debugMode) {
             return Promise.resolve();
         }
         const { messageText, messagePayload, messageHeader, scheduleMode, messageSendDate, sendMode, messageTags, messageAliases } = messageData;
 
         const body = {
-            apiKey: store.getters.apiKey,
+            apiKey: await getApiKey(appId),
             message: {
                 text: messageText,
                 payload: this.parsePayload(messagePayload),

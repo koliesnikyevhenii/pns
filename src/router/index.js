@@ -19,7 +19,7 @@ const router = createRouter({
                     component: () => import('@/views/Dashboard.vue')
                 },
                 {
-                    path: '/app/:appId/message',
+                    path: '/app/:appId/messages/send',
                     name: 'message',
                     meta: { requiresAuth: true },
                     component: () => import('@/views/pages/SendMessage.vue')
@@ -83,9 +83,14 @@ const router = createRouter({
 
 // Global navigation guard
 router.beforeEach((to, from, next) => {
-    if (to.name === 'dashboard') {
+    // if (to.name === 'dashboard') {
+    //     hideMenu();
+    // } else if (from.name !== 'dashboard') {
+    //     showMenu();
+    // }
+    if (to.params.appId === undefined) {
         hideMenu();
-    } else if (from.name !== 'dashboard') {
+    } else if (from.params.appId !== undefined) {
         showMenu();
     }
     if (to.meta.requiresAuth && !store.getters.isAuthenticated) {
@@ -97,7 +102,10 @@ router.beforeEach((to, from, next) => {
 });
 
 router.afterEach((to, from) => {
-    if (from.name === 'dashboard' && to.name !== 'dashboard') {
+    // if (from.name === 'dashboard' && to.name !== 'dashboard') {
+    //     showMenu();
+    // }
+    if (from.params.appId === undefined && to.params.appId !== undefined) {
         showMenu();
     }
 });

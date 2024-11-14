@@ -13,7 +13,7 @@ const route = useRoute();
 onBeforeMount(() => {
     loading.value = true;
     alias.value = route.params.alias;
-    MessageService.getMessagesByAlias(alias.value).then((response) => {
+    MessageService.getMessagesByAlias(route.params.appId, alias.value).then((response) => {
         loading.value = false;
         messageItems.value = response.data;
   });

@@ -3,7 +3,7 @@ import { onBeforeMount, ref, reactive, watch } from "vue";
 import { useForm, Form } from "vee-validate";
 import * as yup from "yup";
 import { useToast } from "primevue/usetoast";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import { SendMode, ScheduleMode } from "@/constants/enums"; 
 import { ActionService } from "@/service/ActionService";
 import { TagService } from "@/service/TagsService";
@@ -11,6 +11,7 @@ import AutoComplete from 'primevue/autocomplete';
 import { MessageService } from "@/service/MessageService";
 
 const router = useRouter();
+const route = useRoute();
 const toast = useToast();
 
 const actionItems = ref([]);
@@ -91,7 +92,7 @@ const unselectTag = (event) => {
 };
 
 const submitForm = handleSubmit((values) => {
-  MessageService.SendMessage(values).then(() => {
+  MessageService.SendMessage(route.params.appId, values).then(() => {
     toast.add({
       severity: "info",
       summary: "Success",
@@ -114,11 +115,11 @@ onBeforeMount(() => {
     setFieldValue("messageAliases", router.options.history.state.alias)
   }
 
-  ActionService.getActions().then((response) => {
+  ActionService.getActions(route.params.appId).then((response) => {
     actionItems.value = response.data;
   });
 
-  TagService.getTags().then((response) => {
+  TagService.getTags(route.params.appId).then((response) => {
     tags.value = response.data;
   })
 });

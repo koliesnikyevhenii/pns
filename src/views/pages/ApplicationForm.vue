@@ -256,7 +256,7 @@ const [serviceAccountFileName] = defineField('serviceAccountFileName');
                         <InputText id="description" type="text" v-model="description" v-bind="descriptionAttr" />
                         <Message severity="error" v-if="errors.description">{{ errors.description }}</Message>
                     </div>
-                    <div class="flex flex-col gap-2">
+                    <div class="flex flex-col gap-2 readonly-input">
                         <label for="apiKey">Api Key</label>
                         <InputText id="apiKey" type="text" :readonly="true" v-model="apiKey" v-bind="apiKeyAttr" />
                         <Message severity="error" v-if="errors.apiKey">{{ errors.apiKey }}</Message>
@@ -322,5 +322,14 @@ const [serviceAccountFileName] = defineField('serviceAccountFileName');
 <style>
 .p-fileupload span[files] {
     display: none;
+}
+.readonly-input {
+    pointer-events: none;
+    cursor: default;
+}
+
+.readonly-input:hover {
+    background-color: inherit;
+    border-color: inherit;
 }
 </style>

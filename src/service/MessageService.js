@@ -4,9 +4,8 @@ import messagesListStub from '@/stubs/messages.json';
 import messageListByAlias from '@/stubs/messageByAlias.json';
 import { getApiKey } from '@/helpers/helpers';
 
-
 export const MessageService = {
-    async getMessages(appId) {
+    async getMessages(apiKey) {
         if (AxiosFactory.debugMode) {
             return Promise.resolve(messagesListStub);
         }
@@ -14,7 +13,7 @@ export const MessageService = {
         const body = {
             page: 0,
             pagesize: 100000,
-            apiKey: await getApiKey(appId)
+            apiKey: apiKey
         };
 
         const result = await AxiosFactory.pnsApi
@@ -25,13 +24,14 @@ export const MessageService = {
         return result.data;
     },
 
-    async getMessagesByAlias(appId, deviceAlias) {
+    async getMessagesByAlias(apiKey, deviceAlias) {
+        console.log(deviceAlias);
         if (AxiosFactory.debugMode) {
             return Promise.resolve(messageListByAlias);
         }
 
         const body = {
-            apiKey: await getApiKey(appId)
+            apiKey: apiKey
         };
 
         const result = await AxiosFactory.pnsApi

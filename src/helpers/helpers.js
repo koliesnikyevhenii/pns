@@ -8,13 +8,12 @@ export const removeSpacesFromObjectKeys = (obj) => {
     }, {});
 };
 
-export const getApiKey = async (appId) => {
+export const getApiKey = async (appId, router, toast) => {
     let apiKey = store.getters.apiKey;
 
-    if (!apiKey) {
-        await store.dispatch('fetchApiKey', appId);
-        apiKey = store.getters.apiKey;
+    if (apiKey) {
+        return apiKey;
     }
 
-    return apiKey;
+    return await store.dispatch('fetchApiKey', { appId: appId, toast: toast, router: router });
 };

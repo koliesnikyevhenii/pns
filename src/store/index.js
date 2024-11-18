@@ -6,7 +6,8 @@ export default createStore({
     state: {
         authToken: localStorage.getItem('authToken') || null,
         apiKey: null,
-        apiKeyLoading: false,
+        apiKeyIsLoading: false,
+        loadingPromise: null
     },
     mutations: {
         setAuthToken(state, token) {
@@ -19,10 +20,14 @@ export default createStore({
         },
         setApiKey(state, apiKey) {
             state.apiKey = apiKey;
-            state.apiKeyLoading = false;
+            state.apiKeyIsLoading = false;
+            state.loadingPromise = null;
         },
-        setApiKeyLoading(state, loading) {
-            state.apiKeyLoading = loading;
+        setApiKeyIsLoading(state, loading) {
+            state.apiKeyIsLoading = loading;
+        },
+        setLoadingPromise(state, promise) {
+            state.loadingPromise = promise;
         }
     },
     actions: {
@@ -35,23 +40,48 @@ export default createStore({
         setApiKey({ commit }, apiKey) {
             commit('setApiKey', apiKey);
         },
-        async fetchApiKey({ commit, state }, appId) {
-            if (state.apiKey || state.apiKeyLoading) {
+        async fetchApiKey({ commit, state }, props) {
+            if (state.apiKey) {
                 return;
-            }
+            };
 
-            commit('setApiKeyLoading', true);
+            if (state.apiKeyIsLoading) {
+                return state.loadingPromise;
+            };
 
-            try {
-                const response = await ApplicationService.getApplication(appId);
-                commit('setApiKey', response.data.apiKey);
-            } catch (error) {
-                console.error('Failed to fetch API key:', error);
-            }
+            commit('setApiKeyIsLoading', true);
+
+            const promise = ApplicationService.getApplication(props.appId)
+                .then((response) => {
+                    if (response.code === 0) {
+                        commit('setApiKey', response.data.apiKey);
+                        return response.data.apiKey;
+                    } else {
+                        console.log(props)
+                        commit('setApiKeyIsLoading', false);
+                        commit('setLoadingPromise', null);
+                        props.toast.add({
+                            severity: 'error',
+                            summary: 'Service error',
+                            detail: response.errorMessage ?? `Error during fetching the apiKey for app: ${props.appId}`,
+                            life: 5000
+                        });
+                        props.router.push({ name: 'dashboard' });
+                    }
+                })
+                .catch((error) => {
+                    commit('setApiKeyIsLoading', false);
+                    commit('setLoadingPromise', null);
+                    console.error('Failed to fetch API key:', error);
+                    throw error;
+                });
+
+            commit('setLoadingPromise', promise);
+            return promise;
         }
     },
     getters: {
         isAuthenticated: (state) => !!state.authToken,
-        apiKey: (state) => state.apiKey,
+        apiKey: (state) => state.apiKey
     }
 });

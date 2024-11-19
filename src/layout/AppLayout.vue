@@ -4,10 +4,15 @@ import { computed, ref, watch } from 'vue';
 import AppFooter from './AppFooter.vue';
 import AppSidebar from './AppSidebar.vue';
 import AppTopbar from './AppTopbar.vue';
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
+import { useStore } from 'vuex';
+import { useToast } from 'primevue/usetoast';
 
 const route = useRoute();
 const isAppSelected = ref(false);
+const store = useStore();
+const toast = useToast();
+const router = useRouter();
 
 const { layoutConfig, layoutState, isSidebarActive, resetMenu } = useLayout();
 
@@ -23,6 +28,12 @@ watch(isSidebarActive, (newVal) => {
 
 watch(() => route.params.appId, (newAppId) => {
     isAppSelected.value = newAppId !== undefined;
+    if (newAppId) {
+        const apiKey = store.getters.getApiKeyForApp(route.params.appId);
+        if (!apiKey) {
+            store.dispatch('fetchApiKey', { appId: route.params.appId, toast: toast, router: router });
+        }
+    }
 }, { immediate: true });
 
 const containerClass = computed(() => {

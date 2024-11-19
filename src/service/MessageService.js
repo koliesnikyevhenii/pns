@@ -2,7 +2,6 @@ import { ScheduleMode, SendMode } from '@/constants/enums';
 import AxiosFactory from '@/service/AxiosFactory.js';
 import messagesListStub from '@/stubs/messages.json';
 import messageListByAlias from '@/stubs/messageByAlias.json';
-import { getApiKey } from '@/helpers/helpers';
 
 export const MessageService = {
     async getMessages(apiKey) {
@@ -25,7 +24,6 @@ export const MessageService = {
     },
 
     async getMessagesByAlias(apiKey, deviceAlias) {
-        console.log(deviceAlias);
         if (AxiosFactory.debugMode) {
             return Promise.resolve(messageListByAlias);
         }
@@ -44,14 +42,14 @@ export const MessageService = {
         return result.data;
     },
 
-    async SendMessage(appId, messageData) {
+    async SendMessage(apiKey, messageData) {
         if (AxiosFactory.debugMode) {
             return Promise.resolve();
         }
         const { messageText, messagePayload, messageHeader, scheduleMode, messageSendDate, sendMode, messageTags, messageAliases } = messageData;
 
         const body = {
-            apiKey: await getApiKey(appId),
+            apiKey: apiKey,
             message: {
                 text: messageText,
                 payload: this.parsePayload(messagePayload),

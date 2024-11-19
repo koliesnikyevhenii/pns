@@ -15,7 +15,7 @@ const router = useRouter();
 const selectedRow = ref(null);
 const store = useStore();
 
-const { loading, messageList } = useMessageList(() => store.getters.apiKey, toast, router, route);
+const { loading, messageList } = useMessageList(() => store.getters.getApiKeyForApp(route.params.appId), toast, router, route);
 
 function onRowSelect() {
   router.push({

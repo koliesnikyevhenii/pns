@@ -5,7 +5,6 @@ import store from '@/store';
 export function useMessageByAliasList(apiKey, deviceAlias, toast, router, route) {
     const loading = ref(false);
     const messageList = ref([]);
-    console.log(deviceAlias);
 
     watch(
         apiKey,

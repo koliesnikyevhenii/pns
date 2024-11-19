@@ -79,7 +79,7 @@ function initCharts() {
 }
 
 function editApp(appId, apiKey) {
-    store.dispatch('setApiKey', apiKey)
+    store.dispatch('setApiKey', { appId: appId, apiKey: apiKey })
     router.push({ name: 'application', params: { appId: appId } });
 }
 
@@ -104,7 +104,7 @@ function newApp() {
 }
 
 function appMessages(appId, apiKey) {
-    store.dispatch('setApiKey', apiKey)
+    store.dispatch('setApiKey', { appId: appId, apiKey: apiKey })
     router.push({ name: 'messagebyalias', params: { appId: appId } });
 }
 

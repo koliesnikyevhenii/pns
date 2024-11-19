@@ -1,14 +1,18 @@
 <script setup>
 import { ActionService } from "@/service/ActionService";
 import { FilterMatchMode } from "@primevue/core/api";
-import { onBeforeMount, ref } from "vue";
+import { onBeforeMount, onMounted, ref } from "vue";
 import { useForm, Form } from "vee-validate";
 import { useToast } from "primevue/usetoast";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import * as yup from "yup";
+import { getApiKey } from "@/helpers/helpers";
 
+const router = useRouter();
 const route = useRoute();
 const toast = useToast();
+
+const apiKey = ref(null);
 
 const filters = ref(null);
 const loading = ref(false);
@@ -31,7 +35,7 @@ const { defineField, handleSubmit, handleReset, errors } = useForm({
 });
 
 const submitForm = handleSubmit((values) => {
-  ActionService.createAction(route.params.appId, values).then(() => {
+  ActionService.createAction(apiKey.value, values).then(() => {
     toast.add({
       severity: "info",
       summary: "Success",
@@ -57,7 +61,7 @@ function showActionDialog() {
 }
 
 function deleteAction() {
-  ActionService.deleteAction(route.params.appId, action.value.id).then(() => {
+  ActionService.deleteAction(apiKey.value, action.value.id).then(() => {
     deleteActionDialog.value = false;
     loadActions();
   });
@@ -70,14 +74,17 @@ function resetForm() {
 
 function loadActions() {
   loading.value = true;
-  ActionService.getActions(route.params.appId).then((response) => {
+  ActionService.getActions(apiKey.value).then((response) => {
     loading.value = false;
     actionItems.value = response.data;
   });
 }
+onMounted(async () => {
+  apiKey.value = await getApiKey(route.params.appId, toast, router);
+  loadActions();
+})
 
 onBeforeMount(() => {
-  loadActions();
   initFilters();
 });
 

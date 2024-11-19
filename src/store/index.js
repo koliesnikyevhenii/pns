@@ -5,7 +5,7 @@ import { ApplicationService } from '@/service/ApplicationService';
 export default createStore({
     state: {
         authToken: localStorage.getItem('authToken') || null,
-        apiKey: null,
+        apiKeys: new Map(),
         apiKeyIsLoading: false,
         loadingPromise: null
     },
@@ -18,8 +18,8 @@ export default createStore({
             state.authToken = null;
             localStorage.removeItem('authToken');
         },
-        setApiKey(state, apiKey) {
-            state.apiKey = apiKey;
+        setApiKey(state, { appId, apiKey }) {
+            state.apiKeys.set(appId.toString(), apiKey);
             state.apiKeyIsLoading = false;
             state.loadingPromise = null;
         },
@@ -37,27 +37,26 @@ export default createStore({
         logout({ commit }) {
             commit('clearAuthToken');
         },
-        setApiKey({ commit }, apiKey) {
-            commit('setApiKey', apiKey);
+        setApiKey({ commit }, {appId, apiKey }) {
+            commit('setApiKey', {appId: appId, apiKey: apiKey});
         },
         async fetchApiKey({ commit, state }, props) {
-            if (state.apiKey) {
+            if (state.apiKeys.get(props.appId)) {
                 return;
-            };
+            }
 
             if (state.apiKeyIsLoading) {
                 return state.loadingPromise;
-            };
+            }
 
             commit('setApiKeyIsLoading', true);
 
             const promise = ApplicationService.getApplication(props.appId)
                 .then((response) => {
                     if (response.code === 0) {
-                        commit('setApiKey', response.data.apiKey);
+                        commit('setApiKey', { appId: props.appId, apiKey: response.data.apiKey });
                         return response.data.apiKey;
                     } else {
-                        console.log(props)
                         commit('setApiKeyIsLoading', false);
                         commit('setLoadingPromise', null);
                         props.toast.add({
@@ -82,6 +81,8 @@ export default createStore({
     },
     getters: {
         isAuthenticated: (state) => !!state.authToken,
-        apiKey: (state) => state.apiKey
+        getApiKeyForApp: (state) => (appId) => {
+            return state.apiKeys.get(appId) || null;
+        }
     }
 });

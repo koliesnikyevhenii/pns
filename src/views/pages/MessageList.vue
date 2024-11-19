@@ -13,7 +13,7 @@ const router = useRouter();
 const route = useRoute();
 const alias = ref('');
 
-const { loading, messageList } = useMessageByAliasList(() => store.getters.apiKey, route.params.alias, toast, router, route);
+const { loading, messageList } = useMessageByAliasList(() => store.getters.getApiKeyForApp(route.params.appId), route.params.alias, toast, router, route);
 
 onBeforeMount(() => {
     alias.value = route.params.alias;

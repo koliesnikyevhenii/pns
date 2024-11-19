@@ -1,5 +1,5 @@
 <script setup>
-import { onBeforeMount, ref, reactive, watch } from "vue";
+import { onBeforeMount, ref, reactive, watch, onMounted } from "vue";
 import { useForm, Form } from "vee-validate";
 import * as yup from "yup";
 import { useToast } from "primevue/usetoast";
@@ -9,10 +9,13 @@ import { ActionService } from "@/service/ActionService";
 import { TagService } from "@/service/TagsService";
 import AutoComplete from 'primevue/autocomplete';
 import { MessageService } from "@/service/MessageService";
+import { getApiKey } from "@/helpers/helpers";
 
 const router = useRouter();
 const route = useRoute();
 const toast = useToast();
+
+const apiKey = ref(null);
 
 const actionItems = ref([]);
 const selectedAction = ref('');
@@ -109,19 +112,23 @@ watch(selectedAction, (newAction) => {
   setFieldValue("messagePayload", data);
 })
 
+onMounted(async () => {
+  apiKey.value = await getApiKey(route.params.appId, toast, router);
+
+  ActionService.getActions(apiKey.value).then((response) => {
+    actionItems.value = response.data;
+  });
+
+  TagService.getTags(apiKey.value).then((response) => {
+    tags.value = response.data;
+  })
+})
+
 onBeforeMount(() => {
   if (router.options?.history?.state?.alias) {
     sendMode.value = SendMode.ALIAS;
     setFieldValue("messageAliases", router.options.history.state.alias)
   }
-
-  ActionService.getActions(route.params.appId).then((response) => {
-    actionItems.value = response.data;
-  });
-
-  TagService.getTags(route.params.appId).then((response) => {
-    tags.value = response.data;
-  })
 });
 </script>
 

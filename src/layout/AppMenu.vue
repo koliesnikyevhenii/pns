@@ -3,6 +3,7 @@ import { ref, computed, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import AppMenuItem from "./AppMenuItem.vue";
 import { ReportService } from "@/service/ReportService";
+import { getApiKey } from "@/helpers/helpers";
 
 const route = useRoute();
 // Show menu only on specific routes
@@ -53,9 +54,9 @@ const model = ref([
   },
 ]);
 
-onMounted(() => {
-  ReportService.getReportTypes(route.params.appId).then((response) => {
-    reports.value = response.data.map(item => ({
+onMounted(async () => {
+  ReportService.getReportTypes(await getApiKey(route.params.appId)).then((response) => {
+    reports.value = response.data?.map(item => ({
       label: item.name,
       icon: "pi pi-fw pi-book",
       to: { name: 'reports', params: { appId: route.params.appId, reportId: item.id } },

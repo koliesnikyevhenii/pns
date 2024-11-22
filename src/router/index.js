@@ -95,7 +95,7 @@ router.beforeEach((to, from, next) => {
     }
     if (to.meta.requiresAuth && !store.getters.isAuthenticated) {
         // Redirect to login if not authenticated
-        next('auth/login');
+        next({ name: 'login' });
     } else {
         next(); // Continue to the route
     }

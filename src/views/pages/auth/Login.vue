@@ -1,24 +1,46 @@
 <script setup>
 import FloatingConfigurator from "@/components/FloatingConfigurator.vue";
-import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
+import { Base64 } from 'js-base64';
+import { useForm, Form } from "vee-validate";
+import * as yup from "yup";
+import { useToast } from "primevue/usetoast";
 
-const username = ref("");
-const password = ref("");
 const store = useStore();
 const router = useRouter();
+const toast = useToast();
 
-const loginUser = async () => {
+const schema = yup.object({
+  userName: yup.string().required("'User name' required").max(100),
+  password: yup.string().required("'Password' required").max(30),
+});
+
+const { defineField, handleSubmit, errors } = useForm({
+  initialValues: {
+    userName: "",
+    password: "",
+  },
+  validationSchema: schema,
+});
+
+const [userName, userNameAttr] = defineField("userName");
+const [password, passwordAttr] = defineField("password");
+
+const submitForm = handleSubmit(async (values) => {
   try {
-    //const response = await api.post("/login", { username: "user", password: "password" });
-    const token = "token stub"; //response.data.token;
-    store.dispatch("login", token); // Save token in Vuex
-    router.push("/"); // Redirect to dashboard after login
-  } catch (error) {
-    console.error("Login failed:", error);
-  }
-};
+      var credentials = Base64.encode(values.userName + ';' + values.password);
+      await store.dispatch("login", credentials);
+      router.push({ name: 'dashboard' })
+    } catch (error) {
+    toast.add({
+      severity: 'error',
+      summary: 'Service error',
+      detail: error ?? 'Error logging in',
+      life: 5000
+    });
+    }
+})
 </script>
 
 <template>
@@ -81,43 +103,50 @@ const loginUser = async () => {
             </div>
             <span class="text-muted-color font-medium">Sign in to continue</span>
           </div>
-
-          <div>
-            <label
-              for="username"
-              class="block text-surface-900 dark:text-surface-0 text-xl font-medium mb-2"
-              >Username:</label
-            >
-            <InputText
-              id="username"
-              type="text"
-              placeholder="User Name"
-              class="w-full md:w-[30rem] mb-8"
-              v-model="username"
-            />
-
-            <label
-              for="password1"
-              class="block text-surface-900 dark:text-surface-0 font-medium text-xl mb-2"
-              >Password</label
-            >
-            <Password
-              id="password1"
-              v-model="password"
-              placeholder="Password"
-              :toggleMask="true"
-              class="mb-10"
-              fluid
-              :feedback="false"
-            ></Password>
-            <Button
-              label="Sign In"
-              class="w-full"
-              as="router-link"
-              to="/"
-              @click="loginUser"
-            ></Button>
-          </div>
+          <Form @submit="submitForm">
+            <div>
+              <label
+                for="username"
+                class="block text-surface-900 dark:text-surface-0 text-xl font-medium mb-2"
+                >Username:</label
+              >
+              <InputText
+                id="username"
+                type="text"
+                placeholder="User Name"
+                class="w-full md:w-[30rem] mb-1"
+                v-model="userName"
+                v-bind="userNameAttr"
+              />
+              <Message severity="error" class="mb-8" v-if="errors.userName">
+                {{ errors.userName }}
+              </Message>
+              <label
+                for="password"
+                class="block text-surface-900 dark:text-surface-0 font-medium text-xl mb-2"
+                >Password</label
+              >
+              <Password
+                id="password"
+                v-model="password"
+                v-bind="passwordAttr"
+                placeholder="Password"
+                :toggleMask="true"
+                fluid
+                class="mb-1"
+                :feedback="false"
+              ></Password>
+              <Message severity="error" class="mb-10" v-if="errors.password">
+                {{ errors.password }}
+              </Message>
+              <Button
+                label="Log In"
+                type="submit"
+                class="w-full"
+                :fluid="false"
+              ></Button>
+            </div>
+          </Form>
         </div>
       </div>
     </div>

@@ -1,22 +1,24 @@
 // src/store/index.js
 import { createStore } from 'vuex';
 import { ApplicationService } from '@/service/ApplicationService';
+import AxiosFactory from '@/service/AxiosFactory';
 
 export default createStore({
     state: {
-        authToken: localStorage.getItem('authToken') || null,
+        authToken: null,
+        user: null,
         apiKeys: new Map(),
         apiKeyIsLoading: false,
         loadingPromise: null
     },
     mutations: {
-        setAuthToken(state, token) {
+        setAuth(state, { token, user }) {
             state.authToken = token;
-            localStorage.setItem('authToken', token);
+            state.user = user;
         },
-        clearAuthToken(state) {
+        clearAuth(state) {
             state.authToken = null;
-            localStorage.removeItem('authToken');
+            state.user = null;
         },
         setApiKey(state, { appId, apiKey }) {
             state.apiKeys.set(appId.toString(), apiKey);
@@ -31,14 +33,36 @@ export default createStore({
         }
     },
     actions: {
-        login({ commit }, token) {
-            commit('setAuthToken', token);
+        async login({ commit }, credentials) {
+            const body = {
+                creds: credentials
+            };
+            await AxiosFactory.pnsApi.post('/member/autentication', body).then((response) => {
+                if (response.data.code === 0) {
+                    const token = response.data.data.token;
+                    const user = response.data.data.member;
+
+                    commit('setAuth', { token: token, user: user });
+                    localStorage.setItem('token', token);
+
+                    return token;
+                } else {
+                    throw new Error(response.data.errorMessage);
+                }
+            });
         },
         logout({ commit }) {
-            commit('clearAuthToken');
+            commit('clearAuth');
+            localStorage.removeItem('token');
         },
-        setApiKey({ commit }, {appId, apiKey }) {
-            commit('setApiKey', {appId: appId, apiKey: apiKey});
+        initializeAuth({ commit }) {
+            const token = localStorage.getItem('token');
+            if (token) {
+                commit('setAuth', { token: token });
+            }
+        },
+        setApiKey({ commit }, { appId, apiKey }) {
+            commit('setApiKey', { appId: appId, apiKey: apiKey });
         },
         async fetchApiKey({ commit, state }, props) {
             if (state.apiKeys.get(props.appId)) {
@@ -81,6 +105,8 @@ export default createStore({
     },
     getters: {
         isAuthenticated: (state) => !!state.authToken,
+        getUser: (state) => state.user,
+        getAuthToken: (state) => state.authToken,
         getApiKeyForApp: (state) => (appId) => {
             return state.apiKeys.get(appId) || null;
         }

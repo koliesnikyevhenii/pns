@@ -1,4 +1,3 @@
-import { getApiKey } from '@/helpers/helpers';
 import AxiosFactory from '@/service/AxiosFactory.js';
 import tagsListStub from '@/stubs/tag.json';
 

@@ -17,6 +17,8 @@ const deleteAppDialog = ref(false);
 
 const router = useRouter();
 
+const { getPrimary, getSurface } = useLayout();
+
 function initCharts() {
     const documentStyle = getComputedStyle(document.documentElement);
     const textColorSecondary = documentStyle.getPropertyValue('--text-color-secondary');
@@ -107,6 +109,10 @@ function appMessages(appId, apiKey) {
     store.dispatch('setApiKey', { appId: appId, apiKey: apiKey })
     router.push({ name: 'messagebyalias', params: { appId: appId } });
 }
+
+watch([getPrimary, getSurface], () => {
+    initCharts();
+})
 
 onMounted(async () => {
     const apps = await ApplicationService.getApplications();

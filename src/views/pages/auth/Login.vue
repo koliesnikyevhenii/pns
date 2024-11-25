@@ -1,5 +1,6 @@
 <script setup>
 import FloatingConfigurator from "@/components/FloatingConfigurator.vue";
+import { ref } from 'vue';
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 import { Base64 } from 'js-base64';
@@ -10,6 +11,7 @@ import { useToast } from "primevue/usetoast";
 const store = useStore();
 const router = useRouter();
 const toast = useToast();
+const isLoading = ref(false);
 
 const schema = yup.object({
   userName: yup.string().required("'User name' required").max(100),
@@ -28,11 +30,13 @@ const [userName, userNameAttr] = defineField("userName");
 const [password, passwordAttr] = defineField("password");
 
 const submitForm = handleSubmit(async (values) => {
+  isLoading.value = true;
   try {
       var credentials = Base64.encode(values.userName + ';' + values.password);
       await store.dispatch("login", credentials);
-      router.push({ name: 'dashboard' })
-    } catch (error) {
+      await router.push({ name: 'dashboard' })
+    } 
+  catch (error) {
     toast.add({
       severity: 'error',
       summary: 'Service error',
@@ -40,6 +44,9 @@ const submitForm = handleSubmit(async (values) => {
       life: 5000
     });
     }
+  finally {
+    isLoading.value = false;
+  }
 })
 </script>
 
@@ -133,7 +140,7 @@ const submitForm = handleSubmit(async (values) => {
                 placeholder="Password"
                 :toggleMask="true"
                 fluid
-                class="mb-1"
+                class="mb-2"
                 :feedback="false"
               ></Password>
               <Message severity="error" class="mb-10" v-if="errors.password">
@@ -144,6 +151,7 @@ const submitForm = handleSubmit(async (values) => {
                 type="submit"
                 class="w-full"
                 :fluid="false"
+                :loading="isLoading"
               ></Button>
             </div>
           </Form>

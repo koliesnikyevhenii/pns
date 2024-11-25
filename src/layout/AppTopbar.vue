@@ -13,7 +13,7 @@ const route = useRoute();
 
 const logoutUser = () => {
   store.dispatch("logout"); // Clears the token and auth state
-  router.push("/auth/login"); // Redirect to login page
+  router.push({ name: 'login' }); // Redirect to login page
 };
 
 const showMenu = computed(() => route.params.appId !== undefined);

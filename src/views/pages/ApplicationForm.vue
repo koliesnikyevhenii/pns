@@ -273,6 +273,7 @@ const [serviceAccountFileName] = defineField('serviceAccountFileName');
                                     <label for="serviceAccountFile">Service Account File</label>
                                     <FileUpload mode="basic" name="serviceAccountFile" :maxFileSize="MAX_FILE_SIZE" :customUpload="true" @select="onUploadServiceAccount" class="custom-file-upload" />
                                     <p v-if="serviceAccountFileName">Selected File: {{ serviceAccountFileName }}</p>
+                                    <Message severity="error" v-if="errors.serviceAccountFile">{{ errors.serviceAccountFile }}</Message>
                                 </template>
                             </div>
                         </Fieldset>

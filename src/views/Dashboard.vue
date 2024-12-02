@@ -17,6 +17,8 @@ const deleteAppDialog = ref(false);
 
 const router = useRouter();
 
+const { getPrimary, getSurface } = useLayout();
+
 function initCharts() {
     const documentStyle = getComputedStyle(document.documentElement);
     const textColorSecondary = documentStyle.getPropertyValue('--text-color-secondary');
@@ -79,7 +81,7 @@ function initCharts() {
 }
 
 function editApp(appId, apiKey) {
-    store.dispatch('setApiKey', apiKey)
+    store.dispatch('setApiKey', { appId: appId, apiKey: apiKey })
     router.push({ name: 'application', params: { appId: appId } });
 }
 
@@ -104,9 +106,13 @@ function newApp() {
 }
 
 function appMessages(appId, apiKey) {
-    store.dispatch('setApiKey', apiKey)
+    store.dispatch('setApiKey', { appId: appId, apiKey: apiKey })
     router.push({ name: 'messagebyalias', params: { appId: appId } });
 }
+
+watch([getPrimary, getSurface], () => {
+    initCharts();
+})
 
 onMounted(async () => {
     const apps = await ApplicationService.getApplications();

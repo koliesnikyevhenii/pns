@@ -1,17 +1,21 @@
 <script setup>
-import { MessageService } from "@/service/MessageService";
 import { FilterMatchMode } from "@primevue/core/api";
 import { onBeforeMount, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { format } from "date-fns";
+import { useToast } from "primevue/usetoast";
 import { MessageStatuses } from "@/constants/enums";
+import { useStore } from "vuex";
+import { useMessageList } from "@/composables/useMessageList";
 
+const toast = useToast();
 const filters = ref(null);
-const loading = ref(false);
-const messageItems = ref(null);
 const route = useRoute();
 const router = useRouter();
 const selectedRow = ref(null);
+const store = useStore();
+
+const { loading, messageList } = useMessageList(() => store.getters.getApiKeyForApp(route.params.appId), toast, router, route);
 
 function onRowSelect() {
   router.push({
@@ -24,12 +28,6 @@ function onRowSelect() {
 }
 
 onBeforeMount(() => {
-  loading.value = true;
-  MessageService.getMessages().then((response) => {
-    loading.value = false;
-    messageItems.value = response.data;
-  });
-
   initFilters();
 });
 
@@ -46,7 +44,7 @@ function initFilters() {
     <DataTable
       stripedRows
       sortable
-      :value="messageItems"
+      :value="messageList"
       :paginator="true"
       :rows="10"
       dataKey="id"
@@ -126,5 +124,6 @@ function initFilters() {
         </template>
       </Column>
     </DataTable>
+    <!-- <Toast /> -->
   </div>
 </template>

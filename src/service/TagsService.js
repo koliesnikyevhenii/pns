@@ -1,15 +1,14 @@
 import AxiosFactory from '@/service/AxiosFactory.js';
 import tagsListStub from '@/stubs/tag.json';
-import store from '@/store/index.js';
 
 export const TagService = {
-    async getTags() {
+    async getTags(apiKey) {
         if (AxiosFactory.debugMode) {
             return Promise.resolve(tagsListStub);
         };
 
         const body = {
-            apiKey: store.getters.apiKey
+            apiKey: apiKey
         };
 
         const result = await AxiosFactory.pnsApi

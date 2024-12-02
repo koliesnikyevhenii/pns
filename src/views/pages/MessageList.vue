@@ -1,24 +1,23 @@
 <script setup>
-import { MessageService } from "@/service/MessageService";
 import { onBeforeMount, ref } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { format } from "date-fns";
 import { MessageStatuses } from "@/constants/enums";
+import { useMessageByAliasList } from "@/composables/useMessageByAliasList";
+import { useStore } from "vuex";
+import { useToast } from "primevue/usetoast";
 
-const alias = ref('');
-const loading = ref(null);
-const messageItems = ref(null);
+const store = useStore();
+const toast = useToast();
+const router = useRouter();
 const route = useRoute();
+const alias = ref('');
+
+const { loading, messageList } = useMessageByAliasList(() => store.getters.getApiKeyForApp(route.params.appId), route.params.alias, toast, router, route);
 
 onBeforeMount(() => {
-    loading.value = true;
     alias.value = route.params.alias;
-    MessageService.getMessagesByAlias(alias.value).then((response) => {
-        loading.value = false;
-        messageItems.value = response.data;
-  });
-});
-
+})
 </script>
 
 <template>
@@ -26,7 +25,7 @@ onBeforeMount(() => {
     <div class="font-semibold text-xl mb-4">Messages for alias {{ alias }}</div>
     <DataTable
       stripedRows
-      :value="messageItems"
+      :value="messageList"
       :paginator="true"
       :rows="10"
       dataKey="id"

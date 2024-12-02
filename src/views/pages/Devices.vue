@@ -1,11 +1,16 @@
 <script setup>
+import { getApiKey } from "@/helpers/helpers";
 import { DeviceService } from "@/service/DeviceService";
 import { FilterMatchMode } from "@primevue/core/api";
-import { onBeforeMount, ref, watch } from "vue";
+import { useToast } from "primevue/usetoast";
+import { onBeforeMount, onMounted, ref, watch } from "vue";
 import { useRouter, useRoute } from "vue-router";
 
 const router = useRouter();
 const route = useRoute();
+const toast = useToast();
+
+const apiKey = ref(null);
 
 const filters = ref(null);
 const isLoading = ref(false);
@@ -24,7 +29,7 @@ function loadDevices() {
   //   devices.value = response.data;
   //   totalRecords.value = response.recordsTotal;
   // });
-  DeviceService.getDevices().then((response) => {
+  DeviceService.getDevices(apiKey.value).then((response) => {
     isLoading.value = false;
     devices.value = response.data;
     totalRecords.value = response.recordsTotal;
@@ -32,7 +37,7 @@ function loadDevices() {
 }
 
 function deleteDevice(deviceAlias) {
-  DeviceService.deleteDevice(deviceAlias).then((response) => {
+  DeviceService.deleteDevice(apiKey.value, deviceAlias).then((response) => {
     deleteDeviceDialog.value = false;
   });
 }
@@ -51,7 +56,7 @@ function sendMessage(deviceAlias) {
 
 function toggleDeviceStatus(device) {
   device.status = !device.status;
-  DeviceService.changeDeviceStatus(device);
+  DeviceService.changeDeviceStatus(apiKey.value, device);
 }
 
 function initFilters() {
@@ -69,8 +74,12 @@ watch([page, pageSize], () => {
   loadDevices();
 })
 
-onBeforeMount(() => {
+onMounted(async () => {
+  apiKey.value = await getApiKey(route.params.appId, toast, router)
   loadDevices();
+})
+
+onBeforeMount(() => {
   initFilters();
 });
 </script>

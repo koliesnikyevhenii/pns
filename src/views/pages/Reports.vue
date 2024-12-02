@@ -1,15 +1,21 @@
 <script setup>
-import { removeSpacesFromObjectKeys } from "@/helpers/helpers";
+import { getApiKey, removeSpacesFromObjectKeys } from "@/helpers/helpers";
 import { ReportService } from "@/service/ReportService";
 import { FilterMatchMode } from "@primevue/core/api";
-import { onBeforeMount, watch, ref } from "vue";
-import { useRoute } from "vue-router";
+import { onBeforeMount, watch, ref, onMounted } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import { format, parse } from "date-fns";
+import { useToast } from "primevue/usetoast";
 
+const router = useRouter();
+const route = useRoute();
+const toast = useToast();
+
+
+const apiKey = ref(null);
 const filters = ref(null);
 const loading = ref(false);
 const reportItems = ref(null);
-const route = useRoute();
 const page = ref(1);
 const pageSize = ref(10);
 const totalRecords = ref(0);
@@ -24,14 +30,18 @@ function getSeverity(status) {
 //   loadReports();
 // })
 
-onBeforeMount(() => {
+onMounted(async () => {
+  apiKey.value = await getApiKey(route.params.appId, toast, router);
   loadReports();
+})
+
+onBeforeMount(() => {
   initFilters();
 });
 
-function loadReports() {
+async function loadReports() {
   loading.value = true;
-  ReportService.getReports(page.value, pageSize.value, route.params.reportId, searchString.value).then((response) => {
+  ReportService.getReports(apiKey.value, page.value, pageSize.value, route.params.reportId, searchString.value).then((response) => {
     loading.value = false;
     reportItems.value = response.data.results.map(removeSpacesFromObjectKeys);
     totalRecords.value = response.data.totalCount;

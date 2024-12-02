@@ -31,7 +31,9 @@ const itemKey = ref(null);
 
 onBeforeMount(() => {
     itemKey.value = props.parentItemKey ? props.parentItemKey + '-' + props.index : String(props.index);
-
+    if (route.path === props.item.to || route.name === props.item.to?.name) {
+        setActiveMenuItem(itemKey.value);
+    }
     const activeItem = layoutState.activeMenuItem;
 
     isActiveMenu.value = activeItem === itemKey.value || activeItem ? activeItem.startsWith(itemKey.value + '-') : false;
